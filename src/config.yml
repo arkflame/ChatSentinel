@@ -1,0 +1,78 @@
+# Checks if the player is using blacklisted words.
+swearing:
+  # Do you want to enable this module?
+  enabled: true
+
+  # Warnings until the punish command is executed.
+  max_warnings: 3
+
+  # Show a fake message to the player to make him think his message was sent.
+  fake_message: false
+
+  # Hide the words the player wrote with a ***
+  hide_words: false
+
+  # Commands that should be checked for swearing.
+  # Set to [] to check all commands.
+  commands:
+    - /broadcast
+    - /ebroadcast
+    - /bc
+    - /ebc
+    - /tell
+    - /etell
+    - /msg
+    - /emsg
+    - /reply
+    - /ereply
+    - /r
+    - /er
+    - /global
+    - /g
+
+  # Message sent to the warned player.
+  warn_message: "&c&lCS: &cYou cant send that message! (%warns%/3)"
+
+  # Sends a notification to players with chatsentinel.notify permission.
+  # Set to "" to disable this feature completely.
+  warn_notification: "&c&lCS: &e%player% &ffailed &6Swearing &7(&c&n%message%&7)"
+
+  # You need a mute plugin for ChatSentinel to mute players. (Recommended: LiteBans/AdvancedBans)
+  # Set to "" to disable his feature completely.
+  punish_command: "mute -s %player% Offensive Language (%message%) 1d"
+
+# Checks if player is chatting too fast.
+cooldown:
+  # Do you want to enable this module?
+  enabled: true
+
+  # Time in ms until the player can send another message.
+  time: 1000
+
+  # Message sent to the warned player.
+  warn_message: "&c&lCS: &cDon't send messages too fast!"
+
+# Checks if the player is typing the same message.
+flood:
+  # Do you want to enable this module?
+  enabled: true
+
+  # Time in ms until the player can repeat the same message.
+  time: 10000
+
+  # Message sent to the warned player.
+  warn_message: "&c&lCS: &cDon't repeat the same message!"
+
+# Checks if the player is using syntax.
+# Example: minecraft:tell, essentials:msg
+syntax:
+  # Do you want to enable this module?
+  enabled: true
+
+  # Syntax commands that will not be checked.
+  # Set to {} to disable whitelist.
+  whitelist:
+    - "/strikepractice:"
+
+  # Message sent to the warned player.
+  warn_message: "&c&lCS: &cSyntax is disabled in this server!"

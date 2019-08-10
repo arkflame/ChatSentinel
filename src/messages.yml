@@ -1,0 +1,9 @@
+reload: '&c&lCS: &aPlugin successfully reloaded!'
+
+help: |-
+  &aChatSentinel commands:
+  &e/chatsentinel reload &8| &bReloads the plugin!
+
+unknowncommand: '&cUnknown command. Use /chatsentinel help to see available commands!'
+
+nopermission: '&cYou dont have permission to use this command!'

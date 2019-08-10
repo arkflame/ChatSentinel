@@ -1,0 +1,36 @@
+# This plugin uses Regex for checking messages.
+# Set to [] to disable blacklist completely.
+expressions:
+  # Flood
+  - (\w)\1{10,}
+  # IPs and Websites
+  - ((?<![0-9])(?:(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[ ]?[.,-:; ][ ]?(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[ ]?[., ][ ]?(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[ ]?[., ][ ]?(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2}))(?![0-9]))
+  - ([0-9a-z]{2,}\.)+(ru|com|org|ua|su|tv|net|biz|info|name|mobi|kz|by|lv|eu|tk)(:\d*)?
+  # Swearing (Spanish)
+  - ( )?boludito
+  - chot(o|a)
+  - concha
+  - (ca|k)gon
+  - forrit(o|a)
+  - fracasad(o|a)
+  - garcha
+  - imbecil
+  - maric(on|a)
+  - mierda
+  - ojete
+  - ( )?put(o|a|ito)
+  - pija
+  - pelotudo
+  - poronga
+  - rat(a|ita)
+  - trol(o|a)
+  # Swearing (English)
+  - asshole
+  - bitch
+  - cunt
+  - dick
+  - fuck(er)?
+  - loser
+  - pussy
+  # Miscelaneous
+  - (LiquidBounce)([ ])(Hacked)([ ])(Client)([ ])(by)([ ])(CCBlueX)

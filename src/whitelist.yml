@@ -1,0 +1,7 @@
+# This plugin uses Regex for checking messages.
+# Set to [] to disable whitelist completely.
+expressions:
+  # Server Domains
+  - (arkflame)([.])(com)
+  # Long Youtube Links
+  - (youtube)([.])(com)(/watch)
