@@ -76,7 +76,7 @@ public class PatternVariables {
 			return true;
 		else
 			for (final String command : swearingCommands)
-				if (message.startsWith(command.concat(" ")))
+				if (message.startsWith(command.concat(" ")) || message.endsWith(command))
 					return true;
 
 		return false;
