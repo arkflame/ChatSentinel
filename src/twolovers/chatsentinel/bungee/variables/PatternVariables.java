@@ -3,6 +3,7 @@ package twolovers.chatsentinel.bungee.variables;
 import net.md_5.bungee.config.Configuration;
 import twolovers.chatsentinel.bungee.utils.ConfigUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -36,7 +37,7 @@ public class PatternVariables {
 		reloadNamesPattern();
 	}
 
-	private Pattern createPatternFromStringList(List<String> list) {
+	private Pattern createPatternFromStringList(Collection<String> list) {
 		if (list != null && !list.isEmpty()) {
 			String regex = "";
 

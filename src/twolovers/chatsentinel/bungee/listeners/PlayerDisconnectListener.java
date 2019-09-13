@@ -21,6 +21,7 @@ public class PlayerDisconnectListener implements Listener {
 
 		pluginVariables.removeThrottle(proxiedPlayer);
 		pluginVariables.removeLastMessage(proxiedPlayer);
+		pluginVariables.removeWarns(proxiedPlayer);
 		pluginVariables.removePlayerName(proxiedPlayer.getName());
 		patternVariables.reloadNamesPattern();
 	}

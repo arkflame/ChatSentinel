@@ -3,13 +3,13 @@ package twolovers.chatsentinel.bukkit.variables;
 import org.bukkit.configuration.Configuration;
 import twolovers.chatsentinel.bukkit.utils.ConfigUtil;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 public class SyntaxVariables {
 	final private ConfigUtil configUtil;
 	private boolean syntaxEnabled;
-	private List<String> syntaxWhitelist;
+	private Collection<String> syntaxWhitelist;
 	private String syntaxWarnMessage;
 	private Pattern syntaxPattern;
 
@@ -35,9 +35,8 @@ public class SyntaxVariables {
 	}
 
 	final public boolean isWhitelisted(String message) {
-		if (syntaxWhitelist.size() > 0) {
+		if (syntaxWhitelist.size() > 0)
 			for (String string : syntaxWhitelist) if (message.startsWith(string)) return true;
-		}
 
 		return false;
 	}

@@ -21,6 +21,7 @@ public class PlayerQuitListener implements Listener {
 
 		pluginVariables.removeThrottle(player);
 		pluginVariables.removeLastMessage(player);
+		pluginVariables.removeWarns(player);
 		pluginVariables.removePlayerName(player.getName());
 		patternVariables.reloadNamesPattern();
 	}

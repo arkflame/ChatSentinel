@@ -3,10 +3,7 @@ package twolovers.chatsentinel.bukkit.variables;
 import org.bukkit.entity.Player;
 import twolovers.chatsentinel.bukkit.utils.ConfigUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PluginVariables {
 	private final FloodVariables floodVariables;
@@ -15,11 +12,10 @@ public class PluginVariables {
 	private final SwearingVariables swearingVariables;
 	private final SyntaxVariables syntaxVariables;
 	private final CooldownVariables cooldownVariables;
-
-	final private List<String> playerNames = new ArrayList<>();
-	final private Map<Player, Long> throttle = new HashMap<>();
-	final private Map<Player, Integer> warns = new HashMap<>();
-	final private Map<Player, String> lastMessages = new HashMap<>();
+	private final Collection<String> playerNames = new HashSet<>();
+	private final Map<Player, Long> throttle = new HashMap<>();
+	private final Map<Player, Integer> warns = new HashMap<>();
+	private final Map<Player, String> lastMessages = new HashMap<>();
 
 	public PluginVariables(final ConfigUtil configUtil) {
 		floodVariables = new FloodVariables(configUtil);
@@ -105,7 +101,7 @@ public class PluginVariables {
 		playerNames.remove(string);
 	}
 
-	final List<String> getPlayerNames() {
+	final Collection<String> getPlayerNames() {
 		return playerNames;
 	}
 

@@ -94,7 +94,7 @@ public class ChatListener implements Listener {
 						pluginVariables.setLastMessage(proxiedPlayer, translatedMessage);
 						pluginVariables.setThrottle(proxiedPlayer, currentTimeMillis);
 					}
-				} else if (syntaxVariables.isSyntaxEnabled() && syntaxVariables.getSyntaxPattern().matcher(message).find()) {
+				} else if (syntaxVariables.isSyntaxEnabled() && !syntaxVariables.isWhitelisted(event.getMessage()) && syntaxVariables.getSyntaxPattern().matcher(message).find()) {
 					proxiedPlayer.sendMessage(new TextComponent(syntaxVariables.getSyntaxWarnMessage()));
 					event.setCancelled(true);
 				}

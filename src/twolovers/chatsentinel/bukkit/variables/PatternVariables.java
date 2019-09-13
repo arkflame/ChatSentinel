@@ -3,16 +3,16 @@ package twolovers.chatsentinel.bukkit.variables;
 import org.bukkit.configuration.Configuration;
 import twolovers.chatsentinel.bukkit.utils.ConfigUtil;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 public class PatternVariables {
 	final private ConfigUtil configUtil;
 	final private PluginVariables pluginVariables;
-	private Pattern blacklistPattern;
-	private Pattern whitelistPattern;
-	private Pattern namesPattern;
-	private List<String> swearingCommands;
+	private Pattern blacklistPattern = null;
+	private Pattern whitelistPattern = null;
+	private Pattern namesPattern = null;
+	private Collection<String> swearingCommands;
 
 	public PatternVariables(final ConfigUtil configUtil, final PluginVariables pluginVariables) {
 		this.configUtil = configUtil;
@@ -25,10 +25,10 @@ public class PatternVariables {
 		final Configuration whitelistYml = configUtil.getConfig("whitelist.yml");
 
 		if (blacklistYml != null)
-			blacklistPattern = createPatternFromStringList(blacklistYml.getStringList("expressions"));
+			blacklistPattern = createPatternFromStringCollection(blacklistYml.getStringList("expressions"));
 
 		if (whitelistYml != null)
-			whitelistPattern = createPatternFromStringList(whitelistYml.getStringList("expressions"));
+			whitelistPattern = createPatternFromStringCollection(whitelistYml.getStringList("expressions"));
 
 		if (configYml != null)
 			swearingCommands = configYml.getStringList("swearing.commands");
@@ -36,7 +36,7 @@ public class PatternVariables {
 		reloadNamesPattern();
 	}
 
-	private Pattern createPatternFromStringList(List<String> list) {
+	private Pattern createPatternFromStringCollection(Collection<String> list) {
 		if (!list.isEmpty()) {
 			String regex = "";
 
@@ -63,7 +63,7 @@ public class PatternVariables {
 	}
 
 	final public void reloadNamesPattern() {
-		namesPattern = createPatternFromStringList(pluginVariables.getPlayerNames());
+		namesPattern = createPatternFromStringCollection(pluginVariables.getPlayerNames());
 	}
 
 	public boolean startsWithCommand(String message) {

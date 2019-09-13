@@ -9,7 +9,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 import twolovers.chatsentinel.bukkit.variables.*;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 public class AsyncPlayerChatListener implements Listener {
@@ -59,8 +59,9 @@ public class AsyncPlayerChatListener implements Listener {
 					player.sendMessage(swearingWarnMessage);
 
 				if (swearingVariables.isFakeMessage()) {
-					final Set<Player> recipents = event.getRecipients();
-					recipents.removeIf(player1 -> player1 != player);
+					final Collection<Player> recipients = event.getRecipients();
+
+					recipients.removeIf(player1 -> player1 != player);
 				} else if (swearingVariables.isHideWords())
 					event.setMessage(message.replaceAll(patternVariables.getBlacklistPattern().toString(), "***"));
 				else

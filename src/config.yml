@@ -64,7 +64,7 @@ flood:
   warn_message: "&c&lCS: &cDon't repeat the same message!"
 
 # Checks if the player is using syntax.
-# Example: minecraft:tell, essentials:msg
+# Example: testplugin:testcommand
 syntax:
   # Do you want to enable this module?
   enabled: true

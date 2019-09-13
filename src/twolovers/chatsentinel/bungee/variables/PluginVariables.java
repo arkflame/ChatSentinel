@@ -4,10 +4,7 @@ package twolovers.chatsentinel.bungee.variables;
 import net.md_5.bungee.api.connection.Connection;
 import twolovers.chatsentinel.bungee.utils.ConfigUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PluginVariables {
 	private final FloodVariables floodVariables;
@@ -17,7 +14,7 @@ public class PluginVariables {
 	private final SyntaxVariables syntaxVariables;
 	private final ThrottleVariables throttleVariables;
 
-	final private List<String> playerNames = new ArrayList<>();
+	final private Collection<String> playerNames = new HashSet<>();
 	final private Map<Connection, Long> throttle = new HashMap<>();
 	final private Map<Connection, Integer> warns = new HashMap<>();
 	final private Map<Connection, String> lastMessages = new HashMap<>();
@@ -106,7 +103,7 @@ public class PluginVariables {
 		playerNames.remove(string);
 	}
 
-	final List<String> getPlayerNames() {
+	final Collection<String> getPlayerNames() {
 		return playerNames;
 	}
 
