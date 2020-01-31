@@ -1,28 +1,32 @@
 package twolovers.chatsentinel.bungee.listeners;
 
+import java.util.UUID;
+
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import twolovers.chatsentinel.bungee.variables.PatternVariables;
-import twolovers.chatsentinel.bungee.variables.PluginVariables;
+import twolovers.chatsentinel.shared.chat.ChatPlayer;
+import twolovers.chatsentinel.shared.chat.ChatPlayerManager;
+import twolovers.chatsentinel.shared.modules.WhitelistModule;
+import twolovers.chatsentinel.bungee.modules.ModuleManager;
 
 public class PlayerDisconnectListener implements Listener {
-	final private PluginVariables pluginVariables;
+	final private WhitelistModule whitelistModule;
+	final private ChatPlayerManager chatPlayerManager;
 
-	public PlayerDisconnectListener(final PluginVariables pluginVariables) {
-		this.pluginVariables = pluginVariables;
+	public PlayerDisconnectListener(final ModuleManager moduleManager, final ChatPlayerManager chatPlayerManager) {
+		this.whitelistModule = moduleManager.getWhitelistModule();
+		this.chatPlayerManager = chatPlayerManager;
 	}
 
 	@EventHandler
 	public void onPlayerDisconnect(final PlayerDisconnectEvent event) {
-		final PatternVariables patternVariables = pluginVariables.getPatternVariables();
-		final ProxiedPlayer proxiedPlayer = event.getPlayer();
+		final ProxiedPlayer player = event.getPlayer();
+		final UUID uuid = player.getUniqueId();
+		final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
 
-		pluginVariables.removeThrottle(proxiedPlayer);
-		pluginVariables.removeLastMessage(proxiedPlayer);
-		pluginVariables.removeWarns(proxiedPlayer);
-		pluginVariables.removePlayerName(proxiedPlayer.getName());
-		patternVariables.reloadNamesPattern();
+		this.chatPlayerManager.setOffline(chatPlayer);
+		this.whitelistModule.removeName(player.getName());
 	}
 }

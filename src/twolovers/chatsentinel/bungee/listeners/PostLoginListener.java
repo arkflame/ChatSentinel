@@ -1,23 +1,29 @@
 package twolovers.chatsentinel.bungee.listeners;
 
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import twolovers.chatsentinel.bungee.variables.PatternVariables;
-import twolovers.chatsentinel.bungee.variables.PluginVariables;
+import twolovers.chatsentinel.shared.chat.ChatPlayer;
+import twolovers.chatsentinel.shared.chat.ChatPlayerManager;
+import twolovers.chatsentinel.shared.modules.WhitelistModule;
+import twolovers.chatsentinel.bungee.modules.ModuleManager;
 
 public class PostLoginListener implements Listener {
-	final private PluginVariables pluginVariables;
+	final private WhitelistModule whitelistModule;
+	final private ChatPlayerManager chatPlayerManager;
 
-	public PostLoginListener(PluginVariables pluginVariables) {
-		this.pluginVariables = pluginVariables;
+	public PostLoginListener(final ModuleManager moduleManager, final ChatPlayerManager chatPlayerManager) {
+		this.whitelistModule = moduleManager.getWhitelistModule();
+		this.chatPlayerManager = chatPlayerManager;
 	}
 
 	@EventHandler
-	public void onPlayerJoin(final PostLoginEvent event) {
-		final PatternVariables patternVariables = pluginVariables.getPatternVariables();
+	public void onPostLogin(final PostLoginEvent event) {
+		final ProxiedPlayer player = event.getPlayer();
+		final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(player.getUniqueId());
 
-		pluginVariables.addPlayerName(event.getPlayer().getName());
-		patternVariables.reloadNamesPattern();
+		chatPlayerManager.setOnline(chatPlayer);
+		whitelistModule.addName(player.getName());
 	}
 }

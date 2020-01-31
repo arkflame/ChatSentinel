@@ -1,9 +1,33 @@
-reload: '&c&lCS: &aPlugin successfully reloaded!'
+# You can add as many languages as you want.
+# The language will change depending on the client language.
+# Supported Languages: https://minecraft.gamepedia.com/Language
+default: "en"
 
-help: |-
-  &aChatSentinel commands:
-  &e/chatsentinel reload &8| &bReloads the plugin!
-
-unknowncommand: '&cUnknown command. Use /chatsentinel help to see available commands!'
-
-nopermission: '&cYou dont have permission to use this command!'
+# You can add as many languages as you want.
+langs:
+  en:
+    reload: "&c&lCS: &aPlugin successfully reloaded!"
+    help: |-
+      &aChatSentinel commands:
+      &e/chatsentinel help &7- &bShows this help message!
+      &e/chatsentinel reload &7- &bReloads the plugin!
+    unknowncommand: "&cUnknown command. Use /chatsentinel help to see available commands!"
+    nopermission: "&cYou dont have permission to use this command!"
+    blacklist_warn_message: "&c&lCS: &cYou cant type '%message%'! (%warns%/%maxwarns%)"
+    caps_warn_message: "&c&lCS: &cYou are using too many caps!"
+    cooldown_warn_message: "&c&lCS: &cWait %cooldown%s before sending another message!"
+    flood_warn_message: "&c&lCS: &cYou cant send too large messages!"
+    syntax_warn_message: "&c&lCS: &cSyntax is disabled in this server!"
+  es:
+    reload: "&c&lCS: &aPlugin recargado correctamente!"
+    help: |-
+      &aComandos de ChatSentinel:
+      &e/chatsentinel help &7- &bMira este mensaje de ayuda!
+      &e/chatsentinel reload &7- &bRecarga el plugin!
+    unknowncommand: "&cComando desconocido. Usa /chatsentinel help para ver comandos disponibles!"
+    nopermission: "&cNo tienes permisos para usar este comando!"
+    blacklist_warn_message: "&c&lCS: &cNo puedes escribir '%message%'! (%warns%/%maxwarns%)"
+    caps_warn_message: "&c&lCS: &cEstas usando demasiadas mayusculas!"
+    cooldown_warn_message: "&c&lCS: &cEspera %cooldown%s antes de enviar otro mensaje!"
+    flood_warn_message: "&c&lCS: &cNo puedes enviar mensajes tan largos!"
+    syntax_warn_message: "&c&lCS: &cLa sintaxis esta deshabilitada en este servidor!"

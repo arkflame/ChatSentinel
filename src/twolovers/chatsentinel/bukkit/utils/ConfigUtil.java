@@ -1,6 +1,5 @@
 package twolovers.chatsentinel.bukkit.utils;
 
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -8,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.logging.Level;
 
 public class ConfigUtil {
 	final private Plugin plugin;
@@ -17,36 +16,43 @@ public class ConfigUtil {
 		this.plugin = plugin;
 	}
 
-	public void createFile(final String file) {
-		try {
-			final File dataFolder = plugin.getDataFolder();
-			final File configFile = new File(plugin.getDataFolder(), file);
+	public YamlConfiguration get(String filePath) {
+		final File dataFolder = plugin.getDataFolder();
+		final File file = new File(filePath.replace("%datafolder%", dataFolder.toPath().toString()));
 
-			if (!plugin.getDataFolder().exists() && dataFolder.mkdir()) {
-				System.out.println("[ChatSentinel] Data folder has been created!");
-			}
-
-			if (!configFile.exists()) {
-				final Path newConfigPath = configFile.toPath();
-				final InputStream inputStream = plugin.getClass().getClassLoader().getResourceAsStream(file);
-
-				if (inputStream != null) {
-					Files.copy(inputStream, newConfigPath);
-					System.out.println("[ChatSentinel] File " + configFile + " has been created!");
-				}
-			}
-		} catch (final IOException e) {
-			System.out.println("[ChatSentinel] Unable to create configuration file!");
-		}
+		if (file.exists())
+			return YamlConfiguration.loadConfiguration(file);
+		else
+			return new YamlConfiguration();
 	}
 
-	public Configuration getConfig(final String file) {
-		final File configFile = new File(plugin.getDataFolder(), file);
+	public void create(String file) {
+		try {
+			final File dataFolder = plugin.getDataFolder();
 
-		if (!configFile.exists()) {
-			createFile(file);
+			file = file.replace("%datafolder%", dataFolder.toPath().toString());
+
+			final File configFile = new File(file);
+
+			if (!configFile.exists()) {
+				final String[] files = file.split("/");
+				final InputStream inputStream = plugin.getClass().getClassLoader()
+						.getResourceAsStream(files[files.length - 1]);
+				final File parentFile = configFile.getParentFile();
+
+				if (parentFile != null)
+					parentFile.mkdirs();
+
+				if (inputStream != null) {
+					Files.copy(inputStream, configFile.toPath());
+					plugin.getLogger().log(Level.INFO, ("[%pluginname%] File " + configFile + " has been created!")
+							.replace("%pluginname%", plugin.getDescription().getName()));
+				} else
+					configFile.createNewFile();
+			}
+		} catch (final IOException e) {
+			plugin.getLogger().log(Level.INFO, ("[%pluginname%] Unable to create configuration file!")
+					.replace("%pluginname%", plugin.getDescription().getName()));
 		}
-
-		return YamlConfiguration.loadConfiguration(configFile);
 	}
 }

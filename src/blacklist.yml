@@ -1,13 +1,10 @@
 # This plugin uses Regex for checking messages.
-# Set to [] to disable blacklist completely.
 expressions:
-  # Flood
-  - (\w)\1{10,}
   # IPs and Websites
-  - ((?<![0-9])(?:(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[ ]?[.,-:; ][ ]?(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[ ]?[., ][ ]?(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[ ]?[., ][ ]?(?:25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2}))(?![0-9]))
-  - ([0-9a-z]{2,}\.)+(ru|com|org|ua|su|tv|net|biz|info|name|mobi|kz|by|lv|eu|tk)(:\d*)?
+  - ([\d]{1,3}[., ]{1,}){3,}([\d]{1,3})
+  - ([ &.,]|^)([\w]{5,})([., ]){1,}(com|org|net|biz|info|name|mobi|kz|tk|server.pro|serv.nu)([ &.,]|$)
   # Swearing (Spanish)
-  - ( )?boludito
+  - boludito
   - chot(o|a)
   - concha
   - (ca|k)gon
@@ -18,12 +15,14 @@ expressions:
   - maric(on|a)
   - mierda
   - ojete
-  - ( )?put(o|a|ito)
+  - put(o|a|ito)
   - pija
   - pelotudo
   - poronga
   - rat(a|ita)
   - trol(o|a)
+  # Spaglish
+  - idiot(a)?
   # Swearing (English)
   - asshole
   - bitch

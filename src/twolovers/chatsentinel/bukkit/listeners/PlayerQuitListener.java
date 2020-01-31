@@ -1,28 +1,33 @@
 package twolovers.chatsentinel.bukkit.listeners;
 
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import twolovers.chatsentinel.bukkit.variables.PatternVariables;
-import twolovers.chatsentinel.bukkit.variables.PluginVariables;
+
+import twolovers.chatsentinel.shared.chat.ChatPlayer;
+import twolovers.chatsentinel.shared.chat.ChatPlayerManager;
+import twolovers.chatsentinel.shared.modules.WhitelistModule;
+import twolovers.chatsentinel.bukkit.modules.ModuleManager;
 
 public class PlayerQuitListener implements Listener {
-	final private PluginVariables pluginVariables;
+	final private WhitelistModule whitelistModule;
+	final private ChatPlayerManager chatPlayerManager;
 
-	public PlayerQuitListener(final PluginVariables pluginVariables) {
-		this.pluginVariables = pluginVariables;
+	public PlayerQuitListener(final ModuleManager moduleManager, final ChatPlayerManager chatPlayerManager) {
+		this.whitelistModule = moduleManager.getWhitelistModule();
+		this.chatPlayerManager = chatPlayerManager;
 	}
 
 	@EventHandler
 	public void onPlayerQuit(final PlayerQuitEvent event) {
-		final PatternVariables patternVariables = pluginVariables.getPatternVariables();
 		final Player player = event.getPlayer();
+		final UUID uuid = player.getUniqueId();
+		final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
 
-		pluginVariables.removeThrottle(player);
-		pluginVariables.removeLastMessage(player);
-		pluginVariables.removeWarns(player);
-		pluginVariables.removePlayerName(player.getName());
-		patternVariables.reloadNamesPattern();
+		this.chatPlayerManager.setOffline(chatPlayer);
+		this.whitelistModule.removeName(player.getName());
 	}
 }

@@ -1,105 +1,156 @@
 package twolovers.chatsentinel.bukkit.listeners;
 
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
-import twolovers.chatsentinel.bukkit.variables.*;
 
+import twolovers.chatsentinel.shared.chat.ChatPlayer;
+import twolovers.chatsentinel.shared.chat.ChatPlayerManager;
+import twolovers.chatsentinel.shared.interfaces.Module;
+import twolovers.chatsentinel.shared.modules.CapsModule;
+import twolovers.chatsentinel.shared.modules.CooldownModule;
+import twolovers.chatsentinel.shared.modules.BlacklistModule;
+import twolovers.chatsentinel.shared.modules.FloodModule;
+import twolovers.chatsentinel.shared.modules.MessagesModule;
+import twolovers.chatsentinel.shared.modules.WhitelistModule;
+import twolovers.chatsentinel.bukkit.modules.*;
+import twolovers.chatsentinel.bukkit.utils.VersionUtil;
+
+import java.text.Normalizer;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class AsyncPlayerChatListener implements Listener {
-	final private Plugin plugin;
-	final private PluginVariables pluginVariables;
-	private final FloodVariables floodVariables;
-	private final PatternVariables patternVariables;
-	private final SwearingVariables swearingVariables;
-	private final CooldownVariables cooldownVariables;
+	private final Plugin plugin;
+	private final ModuleManager moduleManager;
+	private final ChatPlayerManager chatPlayerManager;
 
-	public AsyncPlayerChatListener(final Plugin plugin, final PluginVariables pluginVariables) {
+	public AsyncPlayerChatListener(final Plugin plugin, final ModuleManager moduleManager,
+			final ChatPlayerManager chatPlayerManager) {
 		this.plugin = plugin;
-		this.pluginVariables = pluginVariables;
-		floodVariables = pluginVariables.getFloodVariables();
-		patternVariables = pluginVariables.getPatternVariables();
-		swearingVariables = pluginVariables.getSwearingVariables();
-		cooldownVariables = pluginVariables.getCooldownVariables();
+		this.moduleManager = moduleManager;
+		this.chatPlayerManager = chatPlayerManager;
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
 		final Player player = event.getPlayer();
 
 		if (!player.hasPermission("chatsentinel.bypass")) {
-			final Pattern whitelistPattern = patternVariables.getWhitelistPattern();
-			final long currentTimeMillis = System.currentTimeMillis();
-			final long throttleTime = currentTimeMillis - pluginVariables.getThrottle(player);
-			String message = event.getMessage();
-			String modifiedMessage = translateCharacters(message);
+			final UUID uuid = player.getUniqueId();
+			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
+			final Pattern whitelistPattern = whitelistModule.getPattern();
+			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
+			final String message = event.getMessage();
+			String modifiedMessage = formatMessage(message);
 
 			if (whitelistPattern != null) {
 				modifiedMessage = whitelistPattern.matcher(modifiedMessage).replaceAll(" ");
-				modifiedMessage = patternVariables.getNamesPattern().matcher(modifiedMessage).replaceAll(" ");
 				modifiedMessage = modifiedMessage.trim();
 			}
 
-			if (swearingVariables.isSwearingEnabled() && !player.hasPermission("chatsentinel.bypass.swearing") && !modifiedMessage.isEmpty() && patternVariables.getBlacklistPattern().matcher(modifiedMessage).find()) {
-				pluginVariables.addWarn(player);
-
-				final int warns = pluginVariables.getWarns(player);
+			if (!modifiedMessage.isEmpty()) {
+				final MessagesModule messagesModule = moduleManager.getMessagesModule();
+				final Server server = plugin.getServer();
 				final String playerName = player.getName();
-				final String swearingWarnMessage = swearingVariables.getSwearingWarnMessage().replace("%warns%", String.valueOf(warns));
-				final String swearingPunishCommand = swearingVariables.getSwearingPunishCommand().replace("%player%", playerName).replace("%message%", modifiedMessage);
-				final String swearingWarnNotification = swearingVariables.getSwearingWarnNotification().replace("%player%", playerName).replace("%message%", modifiedMessage);
+				final String lang;
 
-				if (!swearingWarnMessage.isEmpty())
-					player.sendMessage(swearingWarnMessage);
+				if (VersionUtil.isOneDotNine()) {
+					lang = player.getLocale();
+				} else
+					lang = player.spigot().getLocale();
 
-				if (swearingVariables.isFakeMessage()) {
-					final Collection<Player> recipients = event.getRecipients();
+				for (final Module module : moduleManager.getModules()) {
+					if (!player.hasPermission("chatsentinel.bypass." + module.getName())
+							&& module.meetsCondition(chatPlayer, modifiedMessage)) {
+						final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
+						final String[][] placeholders = {
+								{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" },
+								{ playerName, message, String.valueOf(warns), String.valueOf(module.getMaxWarns()),
+										String.valueOf(0) } };
 
-					recipients.removeIf(player1 -> player1 != player);
-				} else if (swearingVariables.isHideWords())
-					event.setMessage(message.replaceAll(patternVariables.getBlacklistPattern().toString(), "***"));
-				else
-					event.setCancelled(true);
+						if (module instanceof BlacklistModule) {
+							final BlacklistModule blacklistModule = (BlacklistModule) module;
 
-				if (warns == swearingVariables.getMaxWarnings() && !swearingPunishCommand.equals("")) {
-					pluginVariables.removeWarns(player);
-					Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), swearingPunishCommand));
-				}
+							if (blacklistModule.isFakeMessage()) {
+								final Collection<Player> recipients = event.getRecipients();
 
-				if (!swearingWarnNotification.equals("")) {
-					for (final Player player1 : Bukkit.getOnlinePlayers()) {
-						if (player1.hasPermission("chatsentinel.notify"))
-							player1.sendMessage(swearingWarnNotification);
+								recipients.removeIf(player1 -> player1 != player);
+							} else if (blacklistModule.isHideWords()) {
+								event.setMessage(
+										blacklistModule.getPattern().matcher(modifiedMessage).replaceAll("***"));
+							} else
+								event.setCancelled(true);
+						} else if (module instanceof CapsModule) {
+							final CapsModule capsModule = (CapsModule) module;
+
+							if (capsModule.isReplace())
+								event.setMessage(message.toLowerCase());
+							else
+								event.setCancelled(true);
+						} else if (module instanceof CooldownModule) {
+							placeholders[1][4] = String
+									.valueOf(((CooldownModule) module).getRemainingTime(chatPlayer, message));
+
+							event.setCancelled(true);
+						} else if (module instanceof FloodModule) {
+							final FloodModule floodModule = (FloodModule) module;
+
+							if (floodModule.isReplace()) {
+								final String replacedString = floodModule.replacePattern(message);
+
+								if (!replacedString.isEmpty())
+									event.setMessage(replacedString);
+								else
+									event.setCancelled(true);
+							} else
+								event.setCancelled(true);
+						} else
+							event.setCancelled(true);
+
+						final String notificationMessage = module.getWarnNotification(placeholders);
+						final String warnMessage = messagesModule.getWarnMessage(placeholders, lang, module.getName());
+
+						if (warnMessage != null && !warnMessage.isEmpty())
+							player.sendMessage(warnMessage);
+
+						if (notificationMessage != null && !notificationMessage.isEmpty()) {
+							for (final Player player1 : server.getOnlinePlayers()) {
+								if (player1.hasPermission("chatsentinel.notify"))
+									player1.sendMessage(notificationMessage);
+							}
+
+							server.getConsoleSender().sendMessage(notificationMessage);
+						}
+
+						if (warns >= maxWarns && maxWarns > 0) {
+							server.getScheduler().runTask(plugin, () -> {
+								for (final String command : module.getCommands(placeholders)) {
+									server.dispatchCommand(server.getConsoleSender(), command);
+								}
+							});
+
+							chatPlayer.clearWarns();
+
+							if (event.isCancelled())
+								break;
+						}
 					}
-
-					Bukkit.getConsoleSender().sendMessage(swearingWarnNotification);
 				}
-			} else if (cooldownVariables.isEnabled() && !player.hasPermission("chatsentinel.bypass.cooldown") && throttleTime < cooldownVariables.getThrottleTime()) {
-				player.sendMessage(cooldownVariables.getWarnMessage());
-				event.setCancelled(true);
-			} else if (floodVariables.isEnabled() && !player.hasPermission("chatsentinel.bypass.flood") && throttleTime < floodVariables.getFloodTime() && message.contains(pluginVariables.getLastMessage(player))) {
-				player.sendMessage(floodVariables.getFloodWarnMessage());
-				event.setCancelled(true);
-			} else {
-				pluginVariables.setLastMessage(player, message);
-				pluginVariables.setThrottle(player, currentTimeMillis);
+
+				if (!event.isCancelled())
+					chatPlayer.addLastMessage(modifiedMessage, System.currentTimeMillis());
 			}
 		}
 	}
 
-	private String translateCharacters(final String string) {
-		return string.replace("á", "a")
-				.replace("é", "e")
-				.replace("í", "i")
-				.replace("ó", "o")
-				.replace("ú", "u")
-				.replace("[(]?punto[)]?", ".")
-				.replace("[(]?dot[)]?", ".");
+	private String formatMessage(final String string) {
+		return Normalizer.normalize(string.replace("[(]?punto[)]?", ".").replace("[(]?dot[)]?", "."),
+				Normalizer.Form.NFKD);
 	}
 }

@@ -2,6 +2,6 @@
 # Set to [] to disable whitelist completely.
 expressions:
   # Server Domains
-  - (arkflame)([.])(com)
+  - (yourserver)([.])(com)
   # Long Youtube Links
   - (youtube)([.])(com)(/watch)
