@@ -83,15 +83,16 @@ public class WhitelistModule {
 	}
 
 	public String formatMessage(String message) {
-		/* Removes accents.
+		/* Removes accents
 		 Credit: https://stackoverflow.com/users/636009/david-conrad */
 
 		final char[] out = new char[message.length()];
-		message = Normalizer.normalize(message, Normalizer.Form.NFD);
-		int j = 0;
 
-		for (int i = 0, n = message.length(); i < n; ++i) {
-			char c = message.charAt(i);
+		message = Normalizer.normalize(message, Normalizer.Form.NFD);
+
+		for (int j = 0, i = 0, n = message.length(); i < n; ++i) {
+			final char c = message.charAt(i);
+
 			if (c <= '\u007F')
 				out[j++] = c;
 		}
