@@ -1,11 +1,12 @@
 package twolovers.chatsentinel.shared.modules;
 
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
 public class WhitelistModule {
-	private Pattern pattern = null;
+	private Pattern pattern = null, namesPattern = null;
 	private Collection<String> playerNames, commands;
 	private boolean enabled, names, playerNamesChanged;
 
@@ -18,11 +19,11 @@ public class WhitelistModule {
 		this.pattern = Pattern.compile(createPatternFromStringCollection(whitelistExpressions));
 		this.enabled = enabled;
 		this.names = names;
-		this.playerNamesChanged = false;
+		this.playerNamesChanged = true;
 		this.commands = commands;
 		this.playerNames = playerNames;
 
-		reloadPattern();
+		reloadNamesPattern();
 	}
 
 	final public boolean isEnabled() {
@@ -30,14 +31,14 @@ public class WhitelistModule {
 	}
 
 	final private String createPatternFromStringCollection(final Collection<String> collection) {
-		if (collection.size() > 0) {
-			String regex = "";
+		if (!collection.isEmpty()) {
+			final StringBuilder regex = new StringBuilder();
 
 			for (final String string : collection) {
-				regex = String.format("%s(%s)|", regex, string);
+				regex.append("|" + string);
 			}
 
-			return "(?i)(" + regex + "(?!x)x)";
+			return "(?i)((?!x)x" + regex + ")";
 		} else {
 			return "(?!x)x";
 		}
@@ -45,6 +46,10 @@ public class WhitelistModule {
 
 	final public Pattern getPattern() {
 		return pattern;
+	}
+
+	final public Pattern getNamesPattern() {
+		return namesPattern;
 	}
 
 	final public void addName(final String playerName) {
@@ -61,18 +66,36 @@ public class WhitelistModule {
 		}
 	}
 
-	final public void reloadPattern() {
+	final public void reloadNamesPattern() {
 		if (this.playerNamesChanged) {
-			this.pattern = Pattern.compile(pattern.toString() + createPatternFromStringCollection(this.playerNames));
+			this.namesPattern = Pattern.compile(createPatternFromStringCollection(this.playerNames));
+			this.playerNamesChanged = false;
 		}
 	}
 
-	public boolean startsWithCommand(String message) {
+	public boolean startsWithCommand(final String message) {
 		for (final String command : commands) {
 			if (message.toLowerCase().startsWith(command + ' '))
 				return true;
 		}
 
 		return false;
+	}
+
+	public String formatMessage(String message) {
+		/* Removes accents.
+		 Credit: https://stackoverflow.com/users/636009/david-conrad */
+
+		final char[] out = new char[message.length()];
+		message = Normalizer.normalize(message, Normalizer.Form.NFD);
+		int j = 0;
+
+		for (int i = 0, n = message.length(); i < n; ++i) {
+			char c = message.charAt(i);
+			if (c <= '\u007F')
+				out[j++] = c;
+		}
+
+		return new String(out).replace("(punto)", ".").replace("(dot)", ".");
 	}
 }

@@ -24,6 +24,8 @@ public class PostLoginListener implements Listener {
 		final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(player.getUniqueId());
 
 		chatPlayerManager.setOnline(chatPlayer);
-		whitelistModule.addName(player.getName());
+
+		if (whitelistModule.isEnabled())
+			whitelistModule.addName(player.getName());
 	}
 }

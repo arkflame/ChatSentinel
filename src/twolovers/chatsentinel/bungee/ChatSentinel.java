@@ -37,7 +37,7 @@ public class ChatSentinel extends Plugin {
 
 		proxy.getScheduler().schedule(this, () -> {
 			chatPlayerManager.clear();
-			whitelistModule.reloadPattern();
+			whitelistModule.reloadNamesPattern();
 		}, 10, 10, TimeUnit.SECONDS);
 	}
 }

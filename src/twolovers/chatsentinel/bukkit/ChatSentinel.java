@@ -42,7 +42,7 @@ public class ChatSentinel extends JavaPlugin {
 
 		server.getScheduler().runTaskTimerAsynchronously(this, () -> {
 			chatPlayerManager.clear();
-			whitelistModule.reloadPattern();
+			whitelistModule.reloadNamesPattern();
 		}, 200L, 200L);
 	}
 

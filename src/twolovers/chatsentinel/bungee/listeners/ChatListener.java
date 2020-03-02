@@ -22,7 +22,6 @@ import twolovers.chatsentinel.shared.modules.MessagesModule;
 import twolovers.chatsentinel.shared.modules.SyntaxModule;
 import twolovers.chatsentinel.shared.modules.WhitelistModule;
 
-import java.text.Normalizer;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -50,14 +49,16 @@ public class ChatListener implements Listener {
 				if (!player.hasPermission("chatsentinel.bypass")) {
 					final UUID uuid = player.getUniqueId();
 					final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
-					final Pattern whitelistPattern = whitelistModule.getPattern();
 					final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
 					final String message = event.getMessage();
-					String modifiedMessage = formatMessage(message);
+					String modifiedMessage = whitelistModule.formatMessage(message);
 
-					if (whitelistPattern != null) {
-						modifiedMessage = whitelistPattern.matcher(modifiedMessage).replaceAll("");
-						modifiedMessage = modifiedMessage.trim();
+					if (whitelistModule.isEnabled()) {
+						final Pattern whitelistPattern = whitelistModule.getPattern(),
+								namesPattern = whitelistModule.getNamesPattern();
+
+						modifiedMessage = whitelistPattern.matcher(namesPattern.matcher(modifiedMessage).replaceAll(""))
+								.replaceAll("").trim();
 					}
 
 					final MessagesModule messagesModule = moduleManager.getMessagesModule();
@@ -138,9 +139,9 @@ public class ChatListener implements Listener {
 								for (final String command : module.getCommands(placeholders)) {
 									pluginManager.dispatchCommand(server.getConsole(), command);
 								}
-							}
 
-							chatPlayer.clearWarns();
+								chatPlayer.clearWarns();
+							}
 
 							if (event.isCancelled())
 								break;
@@ -152,10 +153,5 @@ public class ChatListener implements Listener {
 				}
 			}
 		}
-	}
-
-	private String formatMessage(final String string) {
-		return Normalizer.normalize(string.replace("[(]?punto[)]?", ".").replace("[(]?dot[)]?", "."),
-				Normalizer.Form.NFKD);
 	}
 }

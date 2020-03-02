@@ -28,6 +28,8 @@ public class PlayerQuitListener implements Listener {
 		final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
 
 		this.chatPlayerManager.setOffline(chatPlayer);
-		this.whitelistModule.removeName(player.getName());
+
+		if (whitelistModule.isEnabled())
+			this.whitelistModule.removeName(player.getName());
 	}
 }
