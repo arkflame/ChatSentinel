@@ -55,6 +55,11 @@ public class ServerCommandListener implements Listener {
 						.replaceAll("").trim();
 			}
 
+			// Prevent false positives with commands.
+			modifiedMessage = modifiedMessage.contains(" ")
+					? "/" + modifiedMessage.substring(modifiedMessage.indexOf(" "))
+					: "/";
+
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
 			final Server server = plugin.getServer();
 			final String playerName = player.getName();

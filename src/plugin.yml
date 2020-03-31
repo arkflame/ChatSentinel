@@ -1,10 +1,10 @@
 name: ChatSentinel
-version: 0.3.6
+version: 0.3.7
 author: 2LS
 main: twolovers.chatsentinel.bukkit.ChatSentinel
 description: Anti-Swear/Spam plugin for Spigot
-api: "1.15"
-api-version: "1.15"
+api: "1.13"
+api-version: "1.13"
 commands:
   chatsentinel:
     description: "Main command for ChatSentinel plugin"

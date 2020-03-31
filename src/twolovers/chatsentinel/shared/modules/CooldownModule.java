@@ -17,20 +17,16 @@ public class CooldownModule implements Module {
 
 	final public float getRemainingTime(final ChatPlayer chatPlayer, final String message) {
 		if (this.enabled && message != null) {
-			final long lastMessageTime = System.currentTimeMillis() - chatPlayer.getLastMessageTime();
+			final long currentTime = System.currentTimeMillis();
+			final long lastMessageTime = currentTime - chatPlayer.getLastMessageTime();
 			final long timeToWait;
 
 			if ((message.startsWith("/"))) {
-				if (lastMessageTime < this.commandTime)
-					timeToWait = this.commandTime;
-				else
-					timeToWait = 0;
+				timeToWait = this.commandTime;
 			} else if (chatPlayer.isLastMessage(message) && lastMessageTime < this.repeatTime)
 				timeToWait = this.repeatTime;
-			else if (lastMessageTime < this.normalTime)
-				timeToWait = this.normalTime;
 			else
-				timeToWait = 0;
+				timeToWait = this.normalTime;
 
 			return ((float) ((timeToWait - lastMessageTime) / 100)) / 10;
 		}
