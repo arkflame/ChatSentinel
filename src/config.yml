@@ -85,7 +85,7 @@ cooldown:
     normal: 1000
 
     # Messages that are commands.
-    command: 100
+    command: 400
 
 # Checks if player is using too many repeated characters.
 flood:

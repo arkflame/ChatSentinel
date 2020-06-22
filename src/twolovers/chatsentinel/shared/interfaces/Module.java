@@ -7,11 +7,9 @@ public interface Module {
 
     public int getMaxWarns();
 
-    // This will return punishments if the player meets the module conditions.
     public String[] getCommands(final String[][] placeholders);
 
     public String getName();
 
-    // Returns the notification message of the module.
     public String getWarnNotification(final String[][] placeholders);
 }

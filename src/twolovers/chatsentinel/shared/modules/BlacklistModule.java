@@ -43,7 +43,9 @@ public class BlacklistModule implements Module {
 	}
 
 	@Override
-	public boolean meetsCondition(final ChatPlayer chatPlayer, final String message) {
+	public boolean meetsCondition(final ChatPlayer chatPlayer, String message) {
+		message = message.startsWith("/") && message.contains(" ") ? message.substring(message.indexOf(" ")) : message;
+
 		return enabled && pattern.matcher(message).find();
 	}
 

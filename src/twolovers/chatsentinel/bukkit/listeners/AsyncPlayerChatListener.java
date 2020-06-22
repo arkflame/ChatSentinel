@@ -44,7 +44,7 @@ public class AsyncPlayerChatListener implements Listener {
 			final UUID uuid = player.getUniqueId();
 			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
-			final String message = event.getMessage();
+			final String message = event.getMessage().trim();
 			String modifiedMessage = whitelistModule.formatMessage(message);
 
 			if (whitelistModule.isEnabled()) {
@@ -68,6 +68,7 @@ public class AsyncPlayerChatListener implements Listener {
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())
 						&& module.meetsCondition(chatPlayer, modifiedMessage)) {
+					final Collection<Player> recipients = event.getRecipients();
 					final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
 					final String[][] placeholders = {
 							{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" }, { playerName, message,
@@ -77,20 +78,20 @@ public class AsyncPlayerChatListener implements Listener {
 						final BlacklistModule blacklistModule = (BlacklistModule) module;
 
 						if (blacklistModule.isFakeMessage()) {
-							final Collection<Player> recipients = event.getRecipients();
-
 							recipients.removeIf(player1 -> player1 != player);
 						} else if (blacklistModule.isHideWords()) {
 							event.setMessage(blacklistModule.getPattern().matcher(modifiedMessage).replaceAll("***"));
-						} else
+						} else {
 							event.setCancelled(true);
+						}
 					} else if (module instanceof CapsModule) {
 						final CapsModule capsModule = (CapsModule) module;
 
-						if (capsModule.isReplace())
+						if (capsModule.isReplace()) {
 							event.setMessage(message.toLowerCase());
-						else
+						} else {
 							event.setCancelled(true);
+						}
 					} else if (module instanceof CooldownModule) {
 						placeholders[1][4] = String
 								.valueOf(((CooldownModule) module).getRemainingTime(chatPlayer, message));
@@ -100,16 +101,19 @@ public class AsyncPlayerChatListener implements Listener {
 						final FloodModule floodModule = (FloodModule) module;
 
 						if (floodModule.isReplace()) {
-							final String replacedString = floodModule.replacePattern(message);
+							final String replacedString = floodModule.replace(message);
 
-							if (!replacedString.isEmpty())
+							if (!replacedString.isEmpty()) {
 								event.setMessage(replacedString);
-							else
+							} else {
 								event.setCancelled(true);
-						} else
+							}
+						} else {
 							event.setCancelled(true);
-					} else
+						}
+					} else {
 						event.setCancelled(true);
+					}
 
 					final String notificationMessage = module.getWarnNotification(placeholders);
 					final String warnMessage = messagesModule.getWarnMessage(placeholders, lang, module.getName());

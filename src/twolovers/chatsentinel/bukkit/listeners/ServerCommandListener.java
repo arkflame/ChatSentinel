@@ -1,5 +1,8 @@
 package twolovers.chatsentinel.bukkit.listeners;
 
+import java.util.UUID;
+import java.util.regex.Pattern;
+
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,9 +24,6 @@ import twolovers.chatsentinel.shared.modules.MessagesModule;
 import twolovers.chatsentinel.shared.modules.SyntaxModule;
 import twolovers.chatsentinel.shared.modules.WhitelistModule;
 
-import java.util.UUID;
-import java.util.regex.Pattern;
-
 public class ServerCommandListener implements Listener {
 	private final Plugin plugin;
 	private final ModuleManager moduleManager;
@@ -44,21 +44,24 @@ public class ServerCommandListener implements Listener {
 			final UUID uuid = player.getUniqueId();
 			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
-			final String message = event.getMessage();
-			String modifiedMessage = whitelistModule.formatMessage(message);
+			final String originalMessage = event.getMessage().trim();
+			final String modifiedMessage;
 
-			if (whitelistModule.isEnabled()) {
-				final Pattern whitelistPattern = whitelistModule.getPattern(),
-						namesPattern = whitelistModule.getNamesPattern();
+			if (originalMessage.contains(" ")) {
+				if (whitelistModule.isEnabled()) {
+					final Pattern whitelistPattern = whitelistModule.getPattern(),
+							namesPattern = whitelistModule.getNamesPattern();
 
-				modifiedMessage = whitelistPattern.matcher(namesPattern.matcher(modifiedMessage).replaceAll(""))
-						.replaceAll("").trim();
+					modifiedMessage = whitelistPattern
+							.matcher(
+									namesPattern.matcher(whitelistModule.formatMessage(originalMessage)).replaceAll(""))
+							.replaceAll("").trim();
+				} else {
+					modifiedMessage = whitelistModule.formatMessage(originalMessage);
+				}
+			} else {
+				modifiedMessage = "/";
 			}
-
-			// Prevent false positives with commands.
-			modifiedMessage = modifiedMessage.contains(" ")
-					? "/" + modifiedMessage.substring(modifiedMessage.indexOf(" "))
-					: "/";
 
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
 			final Server server = plugin.getServer();
@@ -67,18 +70,20 @@ public class ServerCommandListener implements Listener {
 
 			if (VersionUtil.isOneDotNine()) {
 				lang = player.getLocale();
-			} else
+			} else {
 				lang = player.spigot().getLocale();
+			}
 
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())
 						&& (module instanceof CooldownModule || module instanceof SyntaxModule
-								|| whitelistModule.startsWithCommand(message))
+								|| whitelistModule.startsWithCommand(originalMessage))
 						&& module.meetsCondition(chatPlayer, modifiedMessage)) {
 					final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
 					final String[][] placeholders = {
-							{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" }, { playerName, message,
-									String.valueOf(warns), String.valueOf(module.getMaxWarns()), String.valueOf(0) } };
+							{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" },
+							{ playerName, originalMessage, String.valueOf(warns), String.valueOf(module.getMaxWarns()),
+									String.valueOf(0) } };
 
 					if (module instanceof BlacklistModule) {
 						final BlacklistModule blacklistModule = (BlacklistModule) module;
@@ -91,19 +96,19 @@ public class ServerCommandListener implements Listener {
 						final CapsModule capsModule = (CapsModule) module;
 
 						if (capsModule.isReplace())
-							event.setMessage(message.toLowerCase());
+							event.setMessage(originalMessage.toLowerCase());
 						else
 							event.setCancelled(true);
 					} else if (module instanceof CooldownModule) {
 						placeholders[1][4] = String
-								.valueOf(((CooldownModule) module).getRemainingTime(chatPlayer, message));
+								.valueOf(((CooldownModule) module).getRemainingTime(chatPlayer, modifiedMessage));
 
 						event.setCancelled(true);
 					} else if (module instanceof FloodModule) {
 						final FloodModule floodModule = (FloodModule) module;
 
 						if (floodModule.isReplace()) {
-							final String replacedString = floodModule.replacePattern(message);
+							final String replacedString = floodModule.replace(originalMessage);
 
 							if (!replacedString.isEmpty())
 								event.setMessage(replacedString);
@@ -144,8 +149,9 @@ public class ServerCommandListener implements Listener {
 				}
 			}
 
-			if (!event.isCancelled())
+			if (!event.isCancelled()) {
 				chatPlayer.addLastMessage(modifiedMessage, System.currentTimeMillis());
+			}
 		}
 	}
 }
