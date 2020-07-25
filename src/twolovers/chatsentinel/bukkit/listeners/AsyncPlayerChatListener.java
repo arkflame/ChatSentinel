@@ -62,8 +62,9 @@ public class AsyncPlayerChatListener implements Listener {
 
 			if (VersionUtil.isOneDotNine()) {
 				lang = player.getLocale();
-			} else
+			} else {
 				lang = player.spigot().getLocale();
+			}
 
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())
@@ -139,14 +140,16 @@ public class AsyncPlayerChatListener implements Listener {
 
 						chatPlayer.clearWarns();
 
-						if (event.isCancelled())
+						if (event.isCancelled()) {
 							break;
+						}
 					}
 				}
 			}
 
-			if (!event.isCancelled())
+			if (!event.isCancelled()) {
 				chatPlayer.addLastMessage(modifiedMessage, System.currentTimeMillis());
+			}
 		}
 	}
 }

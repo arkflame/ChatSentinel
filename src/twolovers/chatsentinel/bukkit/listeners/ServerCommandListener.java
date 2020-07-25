@@ -143,8 +143,9 @@ public class ServerCommandListener implements Listener {
 
 						chatPlayer.clearWarns();
 
-						if (event.isCancelled())
+						if (event.isCancelled()) {
 							break;
+						}
 					}
 				}
 			}

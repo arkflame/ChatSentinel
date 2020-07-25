@@ -33,14 +33,14 @@ public class ChatSentinelCommand extends Command {
 			lang = null;
 
 		if (!commandSender.hasPermission("chatsentinel.admin")) {
-			commandSender.sendMessage(new TextComponent(messagesModule.getNoPermission(lang)));
+			commandSender.sendMessage(TextComponent.fromLegacyText(messagesModule.getNoPermission(lang)));
 		} else if (args.length == 0) {
-			commandSender.sendMessage(new TextComponent(messagesModule.getHelp(lang)));
+			commandSender.sendMessage(TextComponent.fromLegacyText(messagesModule.getHelp(lang)));
 		} else if (args[0].equalsIgnoreCase("reload")) {
 			moduleManager.reloadData();
 
-			commandSender.sendMessage(new TextComponent(messagesModule.getReload(lang)));
+			commandSender.sendMessage(TextComponent.fromLegacyText(messagesModule.getReload(lang)));
 		} else
-			commandSender.sendMessage(new TextComponent(messagesModule.getUnknownCommand(lang)));
+			commandSender.sendMessage(TextComponent.fromLegacyText(messagesModule.getUnknownCommand(lang)));
 	}
 }

@@ -32,12 +32,14 @@ public class ChatPlayer {
     }
 
     public boolean isLastMessage(final String message) {
-        if (message != null)
+        if (message != null) {
             for (final String lastMessage : lastMessages) {
 
-                if (message.equals(lastMessage))
+                if (message.equals(lastMessage)) {
                     return true;
+                }
             }
+        }
 
         return false;
     }

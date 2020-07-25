@@ -131,15 +131,15 @@ public class ChatListener implements Listener {
 									module.getName());
 
 							if (warnMessage != null && !warnMessage.isEmpty())
-								player.sendMessage(new TextComponent(warnMessage));
+								player.sendMessage(TextComponent.fromLegacyText(warnMessage));
 
 							if (notificationMessage != null && !notificationMessage.isEmpty()) {
 								for (final ProxiedPlayer player1 : server.getPlayers()) {
 									if (player1.hasPermission("chatsentinel.notify"))
-										player1.sendMessage(new TextComponent(notificationMessage));
+										player1.sendMessage(TextComponent.fromLegacyText(notificationMessage));
 								}
 
-								server.getConsole().sendMessage(new TextComponent(notificationMessage));
+								server.getConsole().sendMessage(TextComponent.fromLegacyText(notificationMessage));
 							}
 
 							if (warns >= maxWarns && maxWarns > 0) {
