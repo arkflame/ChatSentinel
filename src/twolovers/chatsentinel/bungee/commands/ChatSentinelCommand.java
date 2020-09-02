@@ -3,44 +3,60 @@ package twolovers.chatsentinel.bungee.commands;
 import java.util.Locale;
 
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import twolovers.chatsentinel.shared.modules.MessagesModule;
 import twolovers.chatsentinel.bungee.modules.ModuleManager;
 
 public class ChatSentinelCommand extends Command {
-	final private ModuleManager moduleManager;
+	private final ModuleManager moduleManager;
+	private final ProxyServer server;
 
-	public ChatSentinelCommand(final ModuleManager moduleManager) {
+	public ChatSentinelCommand(final ModuleManager moduleManager, final ProxyServer server) {
 		super("chatsentinel");
 		this.moduleManager = moduleManager;
+		this.server = server;
+	}
+
+	private String getLocale(final CommandSender sender) {
+		if (sender instanceof ProxiedPlayer) {
+			final Locale locale = ((ProxiedPlayer) sender).getLocale();
+
+			if (locale != null) {
+				return locale.toString().substring(0, 2);
+			}
+		}
+
+		return null;
 	}
 
 	@Override
-	public void execute(final CommandSender commandSender, final String[] args) {
+	public void execute(final CommandSender sender, final String[] args) {
 		final MessagesModule messagesModule = moduleManager.getMessagesModule();
-		final String lang;
+		final String lang = getLocale(sender);
 
-		if (commandSender instanceof ProxiedPlayer) {
-			final Locale locale = ((ProxiedPlayer) commandSender).getLocale();
+		if (sender.hasPermission("chatsentinel.admin")) {
+			if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
+				sender.sendMessage(messagesModule.getHelp(lang));
+			} else if (args[0].equalsIgnoreCase("reload")) {
+				moduleManager.reloadData();
 
-			if (locale != null)
-				lang = locale.toLanguageTag();
-			else
-				lang = null;
-		} else
-			lang = null;
+				sender.sendMessage(messagesModule.getReload(lang));
+			} else if (args[0].equalsIgnoreCase("clear")) {
+				final StringBuilder emptyLines = new StringBuilder();
+				final String newLine = "\n";
 
-		if (!commandSender.hasPermission("chatsentinel.admin")) {
-			commandSender.sendMessage(TextComponent.fromLegacyText(messagesModule.getNoPermission(lang)));
-		} else if (args.length == 0) {
-			commandSender.sendMessage(TextComponent.fromLegacyText(messagesModule.getHelp(lang)));
-		} else if (args[0].equalsIgnoreCase("reload")) {
-			moduleManager.reloadData();
+				for (int i = 0; i < 32; i++) {
+					emptyLines.append(newLine);
+				}
 
-			commandSender.sendMessage(TextComponent.fromLegacyText(messagesModule.getReload(lang)));
-		} else
-			commandSender.sendMessage(TextComponent.fromLegacyText(messagesModule.getUnknownCommand(lang)));
+				server.broadcast(emptyLines.toString());
+			} else {
+				sender.sendMessage(messagesModule.getUnknownCommand(lang));
+			}
+		} else {
+			sender.sendMessage(messagesModule.getNoPermission(lang));
+		}
 	}
 }

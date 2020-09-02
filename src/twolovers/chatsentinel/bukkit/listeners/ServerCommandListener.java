@@ -12,7 +12,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 
 import twolovers.chatsentinel.bukkit.modules.ModuleManager;
-import twolovers.chatsentinel.bukkit.utils.VersionUtil;
 import twolovers.chatsentinel.shared.chat.ChatPlayer;
 import twolovers.chatsentinel.shared.chat.ChatPlayerManager;
 import twolovers.chatsentinel.shared.interfaces.Module;
@@ -23,6 +22,7 @@ import twolovers.chatsentinel.shared.modules.FloodModule;
 import twolovers.chatsentinel.shared.modules.MessagesModule;
 import twolovers.chatsentinel.shared.modules.SyntaxModule;
 import twolovers.chatsentinel.shared.modules.WhitelistModule;
+import twolovers.chatsentinel.shared.utils.VersionUtil;
 
 public class ServerCommandListener implements Listener {
 	private final Plugin plugin;
@@ -66,13 +66,7 @@ public class ServerCommandListener implements Listener {
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
 			final Server server = plugin.getServer();
 			final String playerName = player.getName();
-			final String lang;
-
-			if (VersionUtil.isOneDotNine()) {
-				lang = player.getLocale();
-			} else {
-				lang = player.spigot().getLocale();
-			}
+			final String lang = VersionUtil.getLocale(player);
 
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())

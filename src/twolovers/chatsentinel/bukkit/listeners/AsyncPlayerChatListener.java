@@ -17,8 +17,8 @@ import twolovers.chatsentinel.shared.modules.BlacklistModule;
 import twolovers.chatsentinel.shared.modules.FloodModule;
 import twolovers.chatsentinel.shared.modules.MessagesModule;
 import twolovers.chatsentinel.shared.modules.WhitelistModule;
+import twolovers.chatsentinel.shared.utils.VersionUtil;
 import twolovers.chatsentinel.bukkit.modules.*;
-import twolovers.chatsentinel.bukkit.utils.VersionUtil;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -58,13 +58,7 @@ public class AsyncPlayerChatListener implements Listener {
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
 			final Server server = plugin.getServer();
 			final String playerName = player.getName();
-			final String lang;
-
-			if (VersionUtil.isOneDotNine()) {
-				lang = player.getLocale();
-			} else {
-				lang = player.spigot().getLocale();
-			}
+			final String lang = VersionUtil.getLocale(player);
 
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())

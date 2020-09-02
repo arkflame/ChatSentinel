@@ -27,15 +27,15 @@ public class ChatSentinel extends Plugin {
 		final ModuleManager moduleManager = new ModuleManager(configUtil);
 		final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
-		final ProxyServer proxy = getProxy();
-		final PluginManager pluginManager = proxy.getPluginManager();
+		final ProxyServer server = getProxy();
+		final PluginManager pluginManager = server.getPluginManager();
 
 		pluginManager.registerListener(this, new ChatListener(this, moduleManager, chatPlayerManager));
 		pluginManager.registerListener(this, new PostLoginListener(moduleManager, chatPlayerManager));
 		pluginManager.registerListener(this, new PlayerDisconnectListener(moduleManager, chatPlayerManager));
-		pluginManager.registerCommand(this, new ChatSentinelCommand(moduleManager));
+		pluginManager.registerCommand(this, new ChatSentinelCommand(moduleManager, server));
 
-		proxy.getScheduler().schedule(this, () -> {
+		server.getScheduler().schedule(this, () -> {
 			chatPlayerManager.clear();
 			whitelistModule.reloadNamesPattern();
 		}, 10, 10, TimeUnit.SECONDS);
