@@ -1,9 +1,11 @@
 package twolovers.chatsentinel.bungee.modules;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
-import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 import twolovers.chatsentinel.bungee.utils.ConfigUtil;
@@ -17,6 +19,7 @@ import twolovers.chatsentinel.shared.modules.SyntaxModule;
 import twolovers.chatsentinel.shared.modules.WhitelistModule;
 
 public class ModuleManager {
+	private final ProxyServer server;
 	private final ConfigUtil configUtil;
 	private final Module[] modules;
 	private final CapsModule capsModule;
@@ -27,7 +30,8 @@ public class ModuleManager {
 	private final BlacklistModule blacklistModule;
 	private final SyntaxModule syntaxModule;
 
-	public ModuleManager(final ConfigUtil configUtil) {
+	public ModuleManager(final ProxyServer server, final ConfigUtil configUtil) {
+		this.server = server;
 		this.configUtil = configUtil;
 		this.modules = new Module[5];
 		this.modules[0] = this.capsModule = new CapsModule();
@@ -41,58 +45,58 @@ public class ModuleManager {
 		reloadData();
 	}
 
-	public Module[] getModules() {
+	public final Module[] getModules() {
 		return modules;
 	}
 
-	final public FloodModule getFloodModule() {
+	public final FloodModule getFloodModule() {
 		return floodModule;
 	}
 
-	final public BlacklistModule getBlacklistModule() {
+	public final BlacklistModule getBlacklistModule() {
 		return blacklistModule;
 	}
 
-	final public SyntaxModule getSyntaxModule() {
+	public final SyntaxModule getSyntaxModule() {
 		return syntaxModule;
 	}
 
-	final public MessagesModule getMessagesModule() {
+	public final MessagesModule getMessagesModule() {
 		return messagesModule;
 	}
 
-	final public WhitelistModule getWhitelistModule() {
+	public final WhitelistModule getWhitelistModule() {
 		return whitelistModule;
 	}
 
-	final public void reloadData() {
-		final Configuration blacklistYml = configUtil.get("%datafolder%/blacklist.yml"),
-				configYml = configUtil.get("%datafolder%/config.yml"),
-				messagesYml = configUtil.get("%datafolder%/messages.yml"),
-				whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
-		final Collection<String> playerNames = new HashSet<>(), langs = messagesYml.getSection("langs").getKeys();
-		final String[][] messageList = new String[langs.size()][9];
-		int i = 0;
+	public final void reloadData() {
+		configUtil.create("%datafolder%/config.yml");
+		configUtil.create("%datafolder%/messages.yml");
+		configUtil.create("%datafolder%/whitelist.yml");
+		configUtil.create("%datafolder%/blacklist.yml");
 
-		for (final ProxiedPlayer player : BungeeCord.getInstance().getPlayers())
+		final Configuration blacklistYml = configUtil.get("%datafolder%/blacklist.yml");
+		final Configuration configYml = configUtil.get("%datafolder%/config.yml");
+		final Configuration messagesYml = configUtil.get("%datafolder%/messages.yml");
+		final Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
+		final Map<String, Map<String, String>> locales = new HashMap<>();
+		final Collection<String> playerNames = new HashSet<>();
+
+		for (final ProxiedPlayer player : server.getPlayers()) {
 			playerNames.add(player.getName());
+		}
 
-		for (final String lang : langs) {
+		for (final String lang : messagesYml.getSection("langs").getKeys()) {
 			final Configuration langSection = messagesYml.getSection("langs." + lang);
-			final String[] langMessages = new String[10];
+			final Map<String, String> messages = new HashMap<>();
 
-			langMessages[0] = lang;
-			langMessages[1] = langSection.getString("reload");
-			langMessages[2] = langSection.getString("help");
-			langMessages[3] = langSection.getString("unknowncommand");
-			langMessages[4] = langSection.getString("nopermission");
-			langMessages[5] = langSection.getString("blacklist_warn_message");
-			langMessages[6] = langSection.getString("caps_warn_message");
-			langMessages[7] = langSection.getString("cooldown_warn_message");
-			langMessages[8] = langSection.getString("flood_warn_message");
-			langMessages[9] = langSection.getString("syntax_warn_message");
-			messageList[i] = langMessages;
-			i++;
+			for (final String key : langSection.getKeys()) {
+				final String value = langSection.getString(key);
+
+				messages.put(key, value);
+			}
+
+			locales.put(lang, messages);
 		}
 
 		this.capsModule.loadData(configYml.getBoolean("caps.enabled"), configYml.getBoolean("caps.replace"),
@@ -105,7 +109,7 @@ public class ModuleManager {
 				configYml.getInt("flood.warn.max"), configYml.getString("flood.pattern"),
 				configYml.getString("flood.warn.notification"),
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
-		this.messagesModule.loadData(messagesYml.getString("default"), messageList);
+		this.messagesModule.loadData(messagesYml.getString("default"), locales);
 		this.whitelistModule.loadData(whitelistYml.getStringList("expressions"),
 				configYml.getStringList("whitelist.commands"), configYml.getBoolean("whitelist.enabled"),
 				configYml.getBoolean("whitelist.names"), playerNames);

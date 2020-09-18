@@ -1,63 +1,48 @@
 package twolovers.chatsentinel.shared.modules;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import twolovers.chatsentinel.shared.utils.PlaceholderUtil;
 
 public class MessagesModule {
-	private String[][] messages;
-	private int defaultLangNumber = 0;
+	private Map<String, Map<String, String>> locales;
+	private String defaultLang = "en";
 
-	final public void loadData(final String defaultLang, final String[][] messages) {
-		this.messages = messages;
-		this.defaultLangNumber = this.getLangNumber(defaultLang);
+	public final void loadData(final String defaultLang, final Map<String, Map<String, String>> messages) {
+		this.locales = messages;
+		this.defaultLang = defaultLang;
 	}
 
-	final public String getReload(final String lang) {
-		return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][1], null);
+	private final String getString(final String lang, final String path) {
+		final Map<String, String> messages = locales.getOrDefault(lang, locales.getOrDefault(defaultLang, locales.getOrDefault("en", new HashMap<>())));
+
+		return messages.getOrDefault(path, "<CHATSENTINEL STRING NOT FOUND>");
 	}
 
-	final public String getHelp(final String lang) {
-		return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][2], null);
+	public final String getCleared(final String[][] placeholders, final String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "cleared"), placeholders);
 	}
 
-	final public String getUnknownCommand(final String lang) {
-		return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][3], null);
+	public final String getReload(final String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "reload"), null);
 	}
 
-	final public String getNoPermission(final String lang) {
-		return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][4], null);
+	public final String getHelp(final String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "help"), null);
 	}
 
-	final public String getWarnMessage(final String[][] placeholders, final String lang, final String module) {
-		if (module.equals("Blacklist"))
-			return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][5], placeholders);
-		else if (module.equals("Caps"))
-			return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][6], placeholders);
-		else if (module.equals("Cooldown"))
-			return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][7], placeholders);
-		else if (module.equals("Flood"))
-			return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][8], placeholders);
-		else if (module.equals("Syntax"))
-			return PlaceholderUtil.replacePlaceholders(messages[getLangNumber(lang)][9], placeholders);
-		else
-			return "";
+	public final String getUnknownCommand(final String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "unknown_command"), null);
 	}
 
-	final private int getLangNumber(final String lang) {
-		int langNumber = defaultLangNumber;
-
-		if (lang != null && !lang.isEmpty()) {
-			for (int i = 0; i < messages.length; i++) {
-				if (lang.startsWith(messages[i][0])) {
-					langNumber = i;
-					break;
-				}
-			}
-		}
-
-		return langNumber;
+	public final String getNoPermission(final String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "no_permission"), null);
 	}
 
-	public String getDefault() {
-		return null;
+	public final String getWarnMessage(final String[][] placeholders, final String lang, final String module) {
+		final String moduleLowerCase = module.toLowerCase();
+
+		return PlaceholderUtil.replacePlaceholders(getString(lang, moduleLowerCase + "_warn_message"), placeholders);
 	}
 }

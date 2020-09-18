@@ -1,5 +1,6 @@
 package twolovers.chatsentinel.bukkit.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -40,13 +41,18 @@ public class ChatSentinelCommand implements CommandExecutor {
 				sender.sendMessage(messagesModule.getReload(lang));
 			} else if (args[0].equalsIgnoreCase("clear")) {
 				final StringBuilder emptyLines = new StringBuilder();
-				final String newLine = "\n";
+				final String newLine = "\n ";
+				final String[][] placeholders = { { "%player%" }, { sender.getName() } };
 
-				for (int i = 0; i < 32; i++) {
+				for (int i = 0; i < 128; i++) {
 					emptyLines.append(newLine);
 				}
 
-				server.broadcast(emptyLines.toString(), "");
+				emptyLines.append(messagesModule.getCleared(placeholders, lang));
+
+				for (final Player player : server.getOnlinePlayers()) {
+					player.sendMessage(emptyLines.toString());
+				}
 			} else {
 				sender.sendMessage(messagesModule.getUnknownCommand(lang));
 			}
