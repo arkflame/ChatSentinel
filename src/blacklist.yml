@@ -3,7 +3,7 @@ expressions:
   # IPs and Websites
   - ([\d]{1,3}[., ]{1,}){3,}([\d]{1,3})
   - ([ &.,]|^)([\w]{5,})([., ]){1,}(com|org|net|biz|info|name|mobi|kz|tk|server.pro|serv.nu)([ &.,]|$)
-  # Swearing (Latino Spanish)
+  # Swearing (Latino/American Spanish)
   - boludito
   - chot(o|a)
   - concha
@@ -21,14 +21,14 @@ expressions:
   - poronga
   - rat(a|ita)
   - trol(o|a)
-  #Swearing (Spain Spanish
+  #Swearing (Spain Spanish)
   - idiota
   - inutil
   - polla
   - pene
   - coño
   - gilipollas
-  - chupapollas
+  - chupapolla(s)?
   - ano
   - paja
   - follar
