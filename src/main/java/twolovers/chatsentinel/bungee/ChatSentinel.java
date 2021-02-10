@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
+import twolovers.chatsentinel.bukkit.utils.RegexTester;
 import twolovers.chatsentinel.bungee.commands.ChatSentinelCommand;
 import twolovers.chatsentinel.bungee.listeners.ChatListener;
 import twolovers.chatsentinel.bungee.listeners.PlayerDisconnectListener;
@@ -18,6 +19,7 @@ public class ChatSentinel extends Plugin {
 
 	public void onEnable() {
 		final ConfigUtil configUtil = new ConfigUtil(this);
+		final RegexTester regexTester = new RegexTester((org.bukkit.plugin.Plugin) this);
 
 		configUtil.create("%datafolder%/config.yml");
 		configUtil.create("%datafolder%/messages.yml");
@@ -25,7 +27,7 @@ public class ChatSentinel extends Plugin {
 		configUtil.create("%datafolder%/blacklist.yml");
 
 		final ProxyServer server = getProxy();
-		final ModuleManager moduleManager = new ModuleManager(server, configUtil);
+		final ModuleManager moduleManager = new ModuleManager(server, configUtil, regexTester);
 		final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
 		final PluginManager pluginManager = server.getPluginManager();

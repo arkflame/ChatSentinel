@@ -26,7 +26,7 @@ public class VersionUtil {
 		} catch (final NoSuchMethodException exception) {
 			try {
 				player.spigot().getClass().getMethod("getLocale");
-				locale = player.spigot().getLocale();
+				locale = player.getLocale();
 			} catch (final Exception exception1) {
 				locale = "en";
 			}

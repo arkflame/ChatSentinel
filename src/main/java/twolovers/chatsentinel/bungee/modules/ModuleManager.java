@@ -1,28 +1,25 @@
-package twolovers.chatsentinel.bukkit.modules;
+package twolovers.chatsentinel.bungee.modules;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
-import org.bukkit.Server;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-
-import twolovers.chatsentinel.bukkit.utils.ConfigUtil;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.config.Configuration;
+import twolovers.chatsentinel.bukkit.utils.RegexTester;
+import twolovers.chatsentinel.bungee.utils.ConfigUtil;
 import twolovers.chatsentinel.shared.interfaces.Module;
 import twolovers.chatsentinel.shared.modules.CapsModule;
 import twolovers.chatsentinel.shared.modules.CooldownModule;
 import twolovers.chatsentinel.shared.modules.BlacklistModule;
-import twolovers.chatsentinel.shared.modules.SyntaxModule;
-import twolovers.chatsentinel.shared.modules.WhitelistModule;
 import twolovers.chatsentinel.shared.modules.FloodModule;
 import twolovers.chatsentinel.shared.modules.MessagesModule;
+import twolovers.chatsentinel.shared.modules.SyntaxModule;
+import twolovers.chatsentinel.shared.modules.WhitelistModule;
 
 public class ModuleManager {
-	private final Server server;
+	private final ProxyServer server;
 	private final ConfigUtil configUtil;
+	private final RegexTester regexTester;
 	private final Module[] modules;
 	private final CapsModule capsModule;
 	private final CooldownModule cooldownModule;
@@ -32,9 +29,10 @@ public class ModuleManager {
 	private final BlacklistModule blacklistModule;
 	private final SyntaxModule syntaxModule;
 
-	public ModuleManager(final Server server, final ConfigUtil configUtil) {
+	public ModuleManager(final ProxyServer server, final ConfigUtil configUtil, final RegexTester regexTester) {
 		this.server = server;
 		this.configUtil = configUtil;
+		this.regexTester = regexTester;
 		this.modules = new Module[5];
 		this.modules[0] = this.capsModule = new CapsModule();
 		this.modules[1] = this.cooldownModule = new CooldownModule();
@@ -83,16 +81,25 @@ public class ModuleManager {
 		final Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
 		final Map<String, Map<String, String>> locales = new HashMap<>();
 		final Collection<String> playerNames = new HashSet<>();
+		final String[] blackListExpressions = blacklistYml.getStringList("expressions").toArray(new String[0]);
+		ArrayList<String> blackListExpressionsAccepted = new ArrayList<>();
 
-		for (final Player player : server.getOnlinePlayers()) {
+		for (String expression : blackListExpressions) {
+			if (regexTester.test(expression)) {
+				blackListExpressionsAccepted.add(expression);
+			} else {
+				System.out.println("[ChatSentinel] Expression "+expression+" was not accepted by the regex parser");
+			}
+		}
+		for (final ProxiedPlayer player : server.getPlayers()) {
 			playerNames.add(player.getName());
 		}
 
-		for (final String lang : messagesYml.getConfigurationSection("langs").getKeys(false)) {
-			final ConfigurationSection langSection = messagesYml.getConfigurationSection("langs." + lang);
+		for (final String lang : messagesYml.getSection("langs").getKeys()) {
+			final Configuration langSection = messagesYml.getSection("langs." + lang);
 			final Map<String, String> messages = new HashMap<>();
 
-			for (final String key : langSection.getKeys(false)) {
+			for (final String key : langSection.getKeys()) {
 				final String value = langSection.getString(key);
 
 				messages.put(key, value);
@@ -119,7 +126,7 @@ public class ModuleManager {
 				configYml.getBoolean("blacklist.fake_message"), configYml.getBoolean("blacklist.hide_words"),
 				configYml.getInt("blacklist.warn.max"), configYml.getString("blacklist.warn.notification"),
 				configYml.getStringList("blacklist.punishments").toArray(new String[0]),
-				blacklistYml.getStringList("expressions").toArray(new String[0]));
+				blackListExpressionsAccepted);
 		this.syntaxModule.loadData(configYml.getBoolean("syntax.enabled"), configYml.getInt("syntax.warn.max"),
 				configYml.getString("syntax.warn.notification"),
 				configYml.getStringList("syntax.whitelist").toArray(new String[0]),

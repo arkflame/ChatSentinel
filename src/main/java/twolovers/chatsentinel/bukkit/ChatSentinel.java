@@ -9,6 +9,7 @@ import twolovers.chatsentinel.bukkit.listeners.PlayerJoinListener;
 import twolovers.chatsentinel.bukkit.listeners.PlayerQuitListener;
 import twolovers.chatsentinel.bukkit.listeners.ServerCommandListener;
 import twolovers.chatsentinel.bukkit.utils.ConfigUtil;
+import twolovers.chatsentinel.bukkit.utils.RegexTester;
 import twolovers.chatsentinel.shared.chat.ChatPlayerManager;
 import twolovers.chatsentinel.shared.modules.WhitelistModule;
 import twolovers.chatsentinel.bukkit.modules.ModuleManager;
@@ -18,9 +19,10 @@ public class ChatSentinel extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		final ConfigUtil configUtil = new ConfigUtil(this);
+		final RegexTester regexTester = new RegexTester(this);
 		final Server server = getServer();
 
-		final ModuleManager moduleManager = new ModuleManager(server, configUtil);
+		final ModuleManager moduleManager = new ModuleManager(server, configUtil, regexTester);
 		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
 		final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 		final PluginManager pluginManager = server.getPluginManager();
