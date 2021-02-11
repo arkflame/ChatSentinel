@@ -82,15 +82,10 @@ public class ModuleManager {
 		final Map<String, Map<String, String>> locales = new HashMap<>();
 		final Collection<String> playerNames = new HashSet<>();
 		final String[] blackListExpressions = blacklistYml.getStringList("expressions").toArray(new String[0]);
-		ArrayList<String> blackListExpressionsAccepted = new ArrayList<>();
+		final String[] whiteListExpressions = whitelistYml.getStringList("expressions").toArray(new String[0]);
+		List<String> blackListExpressionsAccepted = regexTester.getValidExpressions(blackListExpressions);
+		List<String> whiteListExpressionsAccepted = regexTester.getValidExpressions(whiteListExpressions);
 
-		for (String expression : blackListExpressions) {
-			if (regexTester.test(expression)) {
-				blackListExpressionsAccepted.add(expression);
-			} else {
-				System.out.println("[ChatSentinel] Expression "+expression+" was not accepted by the regex parser");
-			}
-		}
 		for (final ProxiedPlayer player : server.getPlayers()) {
 			playerNames.add(player.getName());
 		}
@@ -119,7 +114,7 @@ public class ModuleManager {
 				configYml.getString("flood.warn.notification"),
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
 		this.messagesModule.loadData(messagesYml.getString("default"), locales);
-		this.whitelistModule.loadData(whitelistYml.getStringList("expressions"),
+		this.whitelistModule.loadData(whiteListExpressionsAccepted,
 				configYml.getStringList("whitelist.commands"), configYml.getBoolean("whitelist.enabled"),
 				configYml.getBoolean("whitelist.names"), playerNames);
 		this.blacklistModule.loadData(configYml.getBoolean("blacklist.enabled"),

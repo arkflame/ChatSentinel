@@ -1,6 +1,6 @@
 package twolovers.chatsentinel.shared.modules;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import twolovers.chatsentinel.shared.chat.ChatPlayer;
@@ -15,7 +15,7 @@ public class BlacklistModule implements Module {
 	private Pattern pattern;
 
 	final public void loadData(final boolean enabled, final boolean fakeMessage, final boolean hideWords,
-			final int maxWarns, final String warnNotification, final String[] commands, final ArrayList<String> patterns) {
+			final int maxWarns, final String warnNotification, final String[] commands, final List<String> patterns) {
 		String patternString = "";
 
 		for (final String string : patterns) {
