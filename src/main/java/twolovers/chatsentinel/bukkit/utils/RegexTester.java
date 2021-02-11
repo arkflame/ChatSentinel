@@ -13,7 +13,7 @@ public class RegexTester {
         this.plugin = plugin;
     }
 
-    public static boolean test(String arguments) {
+    public static boolean isValid(String arguments) {
         String userInputPattern = arguments;
         try {
             Pattern.compile(userInputPattern);
@@ -23,15 +23,14 @@ public class RegexTester {
         return true;
     }
 
-    public static List<String> getValidExpressions(String[] expressions) {
-        List<String> acceptedExpressions = new ArrayList<>();
-        for (String expression : expressions) {
-            if (test(expression)) {
-                acceptedExpressions.add(expression);
-            } else {
-                System.out.println("[ChatSentinel] Expression "+expression+" was not accepted by the regex parser");
+    public static List<String> getValidExpressions(List<String> expressions) {
+        expressions.removeIf(s -> {
+            if (isValid(s)) {
+                return false;
             }
-        }
-        return acceptedExpressions;
+            System.out.println("[ChatSentinel] Expression "+s+" was not accepted by the regex parser");
+            return true;
+        });
+        return expressions;
     }
 }

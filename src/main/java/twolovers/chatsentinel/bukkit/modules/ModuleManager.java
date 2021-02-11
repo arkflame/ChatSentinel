@@ -82,8 +82,8 @@ public class ModuleManager {
 		final Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
 		final Map<String, Map<String, String>> locales = new HashMap<>();
 		final Collection<String> playerNames = new HashSet<>();
-		final String[] blackListExpressions = blacklistYml.getStringList("expressions").toArray(new String[0]);
-		final String[] whiteListExpressions = whitelistYml.getStringList("expressions").toArray(new String[0]);
+		final List<String> blackListExpressions = blacklistYml.getStringList("expressions");
+		final List<String> whiteListExpressions = whitelistYml.getStringList("expressions");
 		List<String> blackListExpressionsAccepted = regexTester.getValidExpressions(blackListExpressions);
 		List<String> whiteListExpressionsAccepted = regexTester.getValidExpressions(whiteListExpressions);
 
