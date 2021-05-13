@@ -35,7 +35,7 @@ public class WhitelistModule {
 			final StringBuilder regex = new StringBuilder();
 
 			for (final String string : collection) {
-				regex.append("|" + string);
+				regex.append("|").append(string);
 			}
 
 			return "(?i)((?!x)x" + regex + ")";
@@ -68,7 +68,7 @@ public class WhitelistModule {
 
 	final public void reloadNamesPattern() {
 		if (this.playerNamesChanged) {
-			this.namesPattern = Pattern.compile(createPatternFromStringCollection(this.playerNames));
+			this.namesPattern = Pattern.compile(Pattern.quote(createPatternFromStringCollection(this.playerNames)));
 			this.playerNamesChanged = false;
 		}
 	}
