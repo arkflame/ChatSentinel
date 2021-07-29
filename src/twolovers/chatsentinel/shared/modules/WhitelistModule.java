@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
+import twolovers.chatsentinel.shared.utils.StringUtil;
+
 public class WhitelistModule {
 	private Pattern pattern = null, namesPattern = null;
 	private Collection<String> playerNames, commands;
@@ -54,7 +56,7 @@ public class WhitelistModule {
 
 	final public void addName(final String playerName) {
 		if (names) {
-			this.playerNames.add(playerName);
+			this.playerNames.add(StringUtil.sanitize(playerName));
 			this.playerNamesChanged = true;
 		}
 	}
