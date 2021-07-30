@@ -1,0 +1,49 @@
+# You can add as many languages as you want.
+# The language will change depending on the client language.
+# Supported Languages: https://minecraft.gamepedia.com/Language
+default: "en"
+
+# You can add as many languages as you want.
+langs:
+  en:
+    cleared: "&aThe chat was cleared by &b%player%&a!"
+    reload: "&c&lCS: &aPlugin successfully reloaded!"
+    help: |-
+      &aChatSentinel commands:
+      &e/chatsentinel help &7- &bShows this help message!
+      &e/chatsentinel reload &7- &bReloads the plugin!
+    unknown_command: "&cUnknown command. Use /chatsentinel help to see available commands!"
+    no_permission: "&cYou dont have permission to use this command!"
+    blacklist_warn_message: "&c&lCS: &cYou cant type '%message%'! (%warns%/%maxwarns%)"
+    caps_warn_message: "&c&lCS: &cYou are using too many caps!"
+    cooldown_warn_message: "&c&lCS: &cWait %cooldown%s before sending another message!"
+    flood_warn_message: "&c&lCS: &cYou cant send too large messages!"
+    syntax_warn_message: "&c&lCS: &cSyntax is disabled in this server!"
+  es:
+    cleared: "&aEl chat fue limpiado por &b%player%&a!"
+    reload: "&c&lCS: &aPlugin recargado correctamente!"
+    help: |-
+      &aComandos de ChatSentinel:
+      &e/chatsentinel help &7- &bMira este mensaje de ayuda!
+      &e/chatsentinel reload &7- &bRecarga el plugin!
+    unknown_command: "&cComando desconocido. Usa /chatsentinel help para ver comandos disponibles!"
+    no_permission: "&cNo tienes permisos para usar este comando!"
+    blacklist_warn_message: "&c&lCS: &cNo puedes escribir '%message%'! (%warns%/%maxwarns%)"
+    caps_warn_message: "&c&lCS: &cEstas usando demasiadas mayusculas!"
+    cooldown_warn_message: "&c&lCS: &cEspera %cooldown%s antes de enviar otro mensaje!"
+    flood_warn_message: "&c&lCS: &cNo puedes enviar mensajes tan largos!"
+    syntax_warn_message: "&c&lCS: &cLa sintaxis esta deshabilitada en este servidor!"
+  pt-br:
+    cleared: "&aO bate-papo foi limpo por &b%player%&a!"
+    reload: "&c&lCS: &aPlugin recarregado com sucesso!"
+    help: |-
+      &aComandos do ChatSentinel:
+      &e/chatsentinel help &7- &bMostra essa mensagem de ajuda!
+      &e/chatsentinel reload &7- &bRecarrega o plugin!
+    unknown_command: "&cComando desconhecido. Use /chatsentinel help para ver os comandos disponíveis!"
+    no_permission: "&cVocê não tem permissão para executar este comando!"
+    blacklist_warn_message: "&c&lCS: &cVocê não pode digitar '%message%'! (%warns%/%maxwarns%)"
+    caps_warn_message: "&c&lCS: &cVocê está digitando muitas letras maiúsculas!"
+    cooldown_warn_message: "&c&lCS: &cEspere %cooldown%s antes de enviar outra mensagem!"
+    flood_warn_message: "&c&lCS: &cVocê não pode enviar mensagens muito grandes!"
+    syntax_warn_message: "&c&lCS: &cA sintaxe está desativada neste servidor!"

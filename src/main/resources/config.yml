@@ -1,0 +1,136 @@
+# Replaces words of messages by the ones on whitelist.yml before doing checks.
+# This prevents false positives.
+whitelist:
+  enabled: true
+
+  # Whitelists player names.
+  names: true
+
+  # Commands that should be checked for swearing, caps and flood.
+  # Set to [] to check all commands.
+  commands:
+    - /broadcast
+    - /ebroadcast
+    - /bc
+    - /ebc
+    - /tell
+    - /etell
+    - /msg
+    - /emsg
+    - /reply
+    - /ereply
+    - /r
+    - /er
+    - /global
+    - /g
+
+# Checks if the player is using blacklisted words.
+blacklist:
+  enabled: true
+
+  # Show a fake message to the player to make him think his message was sent.
+  # This doesnt work if the plugin is on BungeeCord.
+  fake_message: false
+
+  # Hide the words the player wrote with a ***
+  hide_words: false
+
+  warn:
+    # Amount of warns required to execute the commands.
+    # Set to -1 to disable this feature completely.
+    max: 3
+
+    # Sends a notification to players with chatsentinel.notify permission.
+    # Set to "" to disable this feature completely.
+    notification: "&c&lCS: &e%player% &ffailed &6Swearing &7(&c%message%&7)"
+
+  # You need a mute plugin for ChatSentinel to mute players. (Recommended: LiteBans/AdvancedBans)
+  # Set to [] to disable this feature completely.
+  punishments:
+    - "mute -s %player% Offensive Language (%message%) 1d"
+
+# Checks if messages have too many caps.
+caps:
+  enabled: true
+
+  # If this is true it will replace the caps with low-case letters.
+  replace: true
+
+  # Maximum amount of caps allowed.
+  max: 8
+
+  warn:
+    # Amount of warns required to execute the commands.
+    # Set to -1 to disable this feature completely.
+    max: -1
+
+    # Sends a notification to players with chatsentinel.notify permission.
+    # Set to "" to disable this feature completely.
+    notification: "&c&lCS: &e%player% &ffailed &6Caps &7(&c%message%&7)"
+
+  # You need a mute plugin for ChatSentinel to mute players. (Recommended: LiteBans/AdvancedBans)
+  # Set to [] to disable this feature completely.
+  punishments: []
+
+# Checks if player is chatting too fast.
+cooldown:
+  enabled: true
+
+  # Time in milliseconds.
+  time:
+    # Messages that are repeated.
+    repeat: 10000
+
+    # Messages without abnormalities.
+    normal: 1000
+
+    # Messages that are commands.
+    command: 400
+
+# Checks if player is using too many repeated characters.
+flood:
+  enabled: true
+
+  # If this is true it will replace the flood instead of cancelling it.
+  # Example: Heloooooo would be converted to just Helloo
+  replace: true
+
+  # Regex pattern to do the checks and replacement.
+  pattern: (\w)\1{5,}|(\w{28,})|([^\wñ]{20,})|(^.{220,}$)
+
+  warn:
+    # Amount of warns required to execute the commands.
+    # Set to -1 to disable this feature completely.
+    max: -1
+
+    # Sends a notification to players with chatsentinel.notify permission.
+    # Set to "" to disable this feature completely.
+    notification: "&c&lCS: &e%player% &ffailed &6Flood &7(&c%message%&7)"
+
+  # You need a mute plugin for ChatSentinel to mute players. (Recommended: LiteBans/AdvancedBans)
+  # Set to [] to disable this feature completely.
+  punishments: []
+
+# Checks if the player is using syntax.
+# Example: testplugin:testcommand
+syntax:
+  # Do you want to enable this module?
+  enabled: true
+
+  # Syntax commands that will not be checked.
+  # Set to {} to disable whitelist.
+  whitelist:
+    - "/strikepractice:"
+
+  warn:
+    # Amount of warns required to execute the commands.
+    # Set to -1 to disable this feature completely.
+    max: -1
+
+    # Sends a notification to players with chatsentinel.notify permission.
+    # Set to "" to disable this feature completely.
+    notification: "&c&lCS: &e%player% &ffailed &6Syntax &7(&c%message%&7)"
+
+  # You need a mute plugin for ChatSentinel to mute players. (Recommended: LiteBans/AdvancedBans)
+  # Set to [] to disable this feature completely.
+  punishments: []
