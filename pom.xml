@@ -9,7 +9,7 @@
     <!-- Plugin Information -->
     <name>ChatSentinel</name>
     <description>Advnaced chat management plugin</description>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
     <url>https://twitter.com/sammwy</url>
 
     <properties>
