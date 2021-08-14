@@ -19,6 +19,7 @@ import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
+import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 
 public class ModuleManager {
 	private final Server server;
@@ -28,9 +29,10 @@ public class ModuleManager {
 	private final CooldownModule cooldownModule;
 	private final FloodModule floodModule;
 	private final MessagesModule messagesModule;
-	private final WhitelistModule whitelistModule;
+	private final GeneralModule generalModule;
 	private final BlacklistModule blacklistModule;
 	private final SyntaxModule syntaxModule;
+	private final WhitelistModule whitelistModule;
 
 	public ModuleManager(final Server server, final ConfigUtil configUtil) {
 		this.server = server;
@@ -42,32 +44,37 @@ public class ModuleManager {
 		this.modules[3] = this.blacklistModule = new BlacklistModule();
 		this.modules[4] = this.syntaxModule = new SyntaxModule();
 		this.messagesModule = new MessagesModule();
+		this.generalModule = new GeneralModule();
 		this.whitelistModule = new WhitelistModule();
 
 		reloadData();
 	}
 
-	public final Module[] getModules() {
+	public Module[] getModules() {
 		return modules;
 	}
 
-	public final FloodModule getFloodModule() {
+	public FloodModule getFloodModule() {
 		return floodModule;
 	}
 
-	public final BlacklistModule getBlacklistModule() {
+	public BlacklistModule getBlacklistModule() {
 		return blacklistModule;
 	}
 
-	public final SyntaxModule getSyntaxModule() {
+	public SyntaxModule getSyntaxModule() {
 		return syntaxModule;
 	}
 
-	public final MessagesModule getMessagesModule() {
+	public MessagesModule getMessagesModule() {
 		return messagesModule;
 	}
 
-	public final WhitelistModule getWhitelistModule() {
+	public GeneralModule getGeneralModule() {
+		return generalModule;
+	}
+
+	public WhitelistModule getWhitelistModule() {
 		return whitelistModule;
 	}
 
@@ -112,9 +119,8 @@ public class ModuleManager {
 				configYml.getString("flood.warn.notification"),
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
 		this.messagesModule.loadData(messagesYml.getString("default"), locales);
-		this.whitelistModule.loadData(whitelistYml.getStringList("expressions"),
-				configYml.getStringList("whitelist.commands"), configYml.getBoolean("whitelist.enabled"),
-				configYml.getBoolean("whitelist.names"), playerNames);
+		this.generalModule.loadData(configYml.getStringList("general.commands"));
+		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"), whitelistYml.getStringList("expressions").toArray(new String[0]));
 		this.blacklistModule.loadData(configYml.getBoolean("blacklist.enabled"),
 				configYml.getBoolean("blacklist.fake_message"), configYml.getBoolean("blacklist.hide_words"),
 				configYml.getInt("blacklist.warn.max"), configYml.getString("blacklist.warn.notification"),

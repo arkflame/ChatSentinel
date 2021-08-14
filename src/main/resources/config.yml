@@ -1,13 +1,10 @@
-# Replaces words of messages by the ones on whitelist.yml before doing checks.
-# This prevents false positives.
+# Cleans up whitelisted expressions from the message
+# This is basically a bypass for certain patterns
 whitelist:
   enabled: true
 
-  # Whitelists player names.
-  names: true
-
-  # Commands that should be checked for swearing, caps and flood.
-  # Set to [] to check all commands.
+general:
+  # Commands that will be threated as normal messages
   commands:
     - /broadcast
     - /ebroadcast
@@ -78,13 +75,8 @@ cooldown:
 
   # Time in milliseconds.
   time:
-    # Messages that are repeated.
     repeat: 10000
-
-    # Messages without abnormalities.
     normal: 1000
-
-    # Messages that are commands.
     command: 400
 
 # Checks if player is using too many repeated characters.

@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.interfaces.Module;
+import dev._2lstudios.chatsentinel.shared.utils.PatternUtil;
 import dev._2lstudios.chatsentinel.shared.utils.PlaceholderUtil;
 
 public class BlacklistModule implements Module {
@@ -13,32 +14,26 @@ public class BlacklistModule implements Module {
 	private String[] commands;
 	private Pattern pattern;
 
-	final public void loadData(final boolean enabled, final boolean fakeMessage, final boolean hideWords,
-			final int maxWarns, final String warnNotification, final String[] commands, final String[] patterns) {
-		String patternString = "";
-
-		for (final String string : patterns) {
-			patternString = String.format("%s(%s)|", patternString, string);
-		}
-
+	public void loadData(final boolean enabled, final boolean fakeMessage, final boolean hideWords, final int maxWarns,
+			final String warnNotification, final String[] commands, final String[] patterns) {
 		this.enabled = enabled;
 		this.fakeMessage = fakeMessage;
 		this.hideWords = hideWords;
 		this.maxWarns = maxWarns;
 		this.warnNotification = warnNotification;
 		this.commands = commands;
-		this.pattern = Pattern.compile("(?i)(" + patternString + "(?!x)x)");
+		this.pattern = PatternUtil.compile(patterns);
 	}
 
-	final public boolean isFakeMessage() {
+	public boolean isFakeMessage() {
 		return this.fakeMessage;
 	}
 
-	final public boolean isHideWords() {
+	public boolean isHideWords() {
 		return this.hideWords;
 	}
 
-	final public Pattern getPattern() {
+	public Pattern getPattern() {
 		return pattern;
 	}
 

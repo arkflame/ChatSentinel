@@ -19,9 +19,11 @@ import dev._2lstudios.chatsentinel.shared.modules.BlacklistModule;
 import dev._2lstudios.chatsentinel.shared.modules.CapsModule;
 import dev._2lstudios.chatsentinel.shared.modules.CooldownModule;
 import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
+import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
+import dev._2lstudios.chatsentinel.shared.utils.StringUtil;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class ServerCommandListener implements Listener {
@@ -42,25 +44,27 @@ public class ServerCommandListener implements Listener {
 
 		if (!player.hasPermission("chatsentinel.bypass")) {
 			final UUID uuid = player.getUniqueId();
+			final GeneralModule generalModule = moduleManager.getGeneralModule();
 			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
 			final String originalMessage = event.getMessage().trim();
-			final String modifiedMessage;
+			final boolean isNormalCommand = generalModule.isCommand(originalMessage);
+			String modifiedMessage;
+
+			modifiedMessage = StringUtil.removeAccents(originalMessage);
 
 			if (originalMessage.contains(" ")) {
-				if (whitelistModule.isEnabled()) {
-					final Pattern whitelistPattern = whitelistModule.getPattern(),
-							namesPattern = whitelistModule.getNamesPattern();
-
-					modifiedMessage = whitelistPattern
-							.matcher(
-									namesPattern.matcher(whitelistModule.formatMessage(originalMessage)).replaceAll(""))
-							.replaceAll("").trim();
-				} else {
-					modifiedMessage = whitelistModule.formatMessage(originalMessage);
+				if (isNormalCommand) {
+					modifiedMessage = modifiedMessage.replace("/", "");
 				}
 			} else {
 				modifiedMessage = "/";
+			}
+
+			if (whitelistModule.isEnabled()) {
+				final Pattern whitelistPattern = whitelistModule.getPattern();
+
+				modifiedMessage = whitelistPattern.matcher(modifiedMessage).replaceAll("");
 			}
 
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
@@ -70,8 +74,7 @@ public class ServerCommandListener implements Listener {
 
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())
-						&& (module instanceof CooldownModule || module instanceof SyntaxModule
-								|| whitelistModule.startsWithCommand(originalMessage))
+						&& (module instanceof CooldownModule || module instanceof SyntaxModule || isNormalCommand)
 						&& module.meetsCondition(chatPlayer, modifiedMessage)) {
 					final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
 					final String[][] placeholders = {

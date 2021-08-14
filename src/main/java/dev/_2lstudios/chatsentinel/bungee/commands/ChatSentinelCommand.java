@@ -5,6 +5,7 @@ import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -16,6 +17,10 @@ public class ChatSentinelCommand extends Command {
 		super("chatsentinel");
 		this.moduleManager = moduleManager;
 		this.server = server;
+	}
+
+	private void sendMessage(final CommandSender sender, final String message) {
+		sender.sendMessage(TextComponent.fromLegacyText(message));
 	}
 
 	@Override
@@ -31,11 +36,11 @@ public class ChatSentinelCommand extends Command {
 
 		if (sender.hasPermission("chatsentinel.admin")) {
 			if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
-				sender.sendMessage(messagesModule.getHelp(lang));
+				sendMessage(sender, messagesModule.getHelp(lang));
 			} else if (args[0].equalsIgnoreCase("reload")) {
 				moduleManager.reloadData();
 
-				sender.sendMessage(messagesModule.getReload(lang));
+				sendMessage(sender, messagesModule.getReload(lang));
 			} else if (args[0].equalsIgnoreCase("clear")) {
 				final StringBuilder emptyLines = new StringBuilder();
 				final String newLine = "\n ";
@@ -48,13 +53,13 @@ public class ChatSentinelCommand extends Command {
 				emptyLines.append(messagesModule.getCleared(placeholders, lang));
 
 				for (final ProxiedPlayer player : server.getPlayers()) {
-					player.sendMessage(emptyLines.toString());
+					sendMessage(player, emptyLines.toString());
 				}
 			} else {
-				sender.sendMessage(messagesModule.getUnknownCommand(lang));
+				sendMessage(sender, messagesModule.getUnknownCommand(lang));
 			}
 		} else {
-			sender.sendMessage(messagesModule.getNoPermission(lang));
+			sendMessage(sender, messagesModule.getNoPermission(lang));
 		}
 	}
 }

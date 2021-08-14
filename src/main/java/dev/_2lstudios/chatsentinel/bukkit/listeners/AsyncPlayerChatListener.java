@@ -1,5 +1,9 @@
 package dev._2lstudios.chatsentinel.bukkit.listeners;
 
+import java.util.Collection;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,7 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.Plugin;
 
-import dev._2lstudios.chatsentinel.bukkit.modules.*;
+import dev._2lstudios.chatsentinel.bukkit.modules.ModuleManager;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 import dev._2lstudios.chatsentinel.shared.interfaces.Module;
@@ -18,11 +22,8 @@ import dev._2lstudios.chatsentinel.shared.modules.CooldownModule;
 import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
+import dev._2lstudios.chatsentinel.shared.utils.StringUtil;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
-
-import java.util.Collection;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class AsyncPlayerChatListener implements Listener {
 	private final Plugin plugin;
@@ -42,23 +43,23 @@ public class AsyncPlayerChatListener implements Listener {
 
 		if (!player.hasPermission("chatsentinel.bypass")) {
 			final UUID uuid = player.getUniqueId();
-			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
 			final String message = event.getMessage().trim();
-			String modifiedMessage = whitelistModule.formatMessage(message);
-
-			if (whitelistModule.isEnabled()) {
-				final Pattern whitelistPattern = whitelistModule.getPattern(),
-						namesPattern = whitelistModule.getNamesPattern();
-
-				modifiedMessage = whitelistPattern.matcher(namesPattern.matcher(modifiedMessage).replaceAll(""))
-						.replaceAll("").trim();
-			}
-
+			final String modifiedMessage;
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
+			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 			final Server server = plugin.getServer();
 			final String playerName = player.getName();
 			final String lang = VersionUtil.getLocale(player);
+
+			if (whitelistModule.isEnabled()) {
+				final Pattern whitelistPattern = whitelistModule.getPattern();
+
+				modifiedMessage = whitelistPattern.matcher(StringUtil.removeAccents(message))
+						.replaceAll("").trim();
+			} else {
+				modifiedMessage = StringUtil.removeAccents(message);
+			}
 
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())
