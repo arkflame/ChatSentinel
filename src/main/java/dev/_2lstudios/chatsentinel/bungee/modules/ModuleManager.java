@@ -80,10 +80,12 @@ public class ModuleManager {
 		configUtil.create("%datafolder%/config.yml");
 		configUtil.create("%datafolder%/messages.yml");
 		configUtil.create("%datafolder%/blacklist.yml");
+		configUtil.create("%datafolder%/whitelist.yml");
 
 		final Configuration blacklistYml = configUtil.get("%datafolder%/blacklist.yml");
 		final Configuration configYml = configUtil.get("%datafolder%/config.yml");
 		final Configuration messagesYml = configUtil.get("%datafolder%/messages.yml");
+		final Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
 		final Map<String, Map<String, String>> locales = new HashMap<>();
 		final Collection<String> playerNames = new HashSet<>();
 
@@ -116,6 +118,7 @@ public class ModuleManager {
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
 		this.messagesModule.loadData(messagesYml.getString("default"), locales);
 		this.generalModule.loadData(configYml.getStringList("general.commands"));
+		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"), whitelistYml.getStringList("expressions").toArray(new String[0]));
 		this.blacklistModule.loadData(configYml.getBoolean("blacklist.enabled"),
 				configYml.getBoolean("blacklist.fake_message"), configYml.getBoolean("blacklist.hide_words"),
 				configYml.getInt("blacklist.warn.max"), configYml.getString("blacklist.warn.notification"),

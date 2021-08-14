@@ -120,7 +120,8 @@ public class ModuleManager {
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
 		this.messagesModule.loadData(messagesYml.getString("default"), locales);
 		this.generalModule.loadData(configYml.getStringList("general.commands"));
-		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"), whitelistYml.getStringList("expressions").toArray(new String[0]));
+		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"),
+				whitelistYml.getStringList("expressions").toArray(new String[0]));
 		this.blacklistModule.loadData(configYml.getBoolean("blacklist.enabled"),
 				configYml.getBoolean("blacklist.fake_message"), configYml.getBoolean("blacklist.hide_words"),
 				configYml.getInt("blacklist.warn.max"), configYml.getString("blacklist.warn.notification"),
