@@ -61,12 +61,14 @@ public class ChatListener implements Listener {
 
 					modifiedMessage = StringUtil.removeAccents(originalMessage);
 		
-					if (originalMessage.contains(" ")) {
-						if (isNormalCommand) {
-							modifiedMessage = modifiedMessage.replace("/", "");
+					if (isCommand()) {
+						if (originalMessage.contains(" ")) {
+							if (isNormalCommand) {
+								modifiedMessage = modifiedMessage.replace("/", "");
+							}
+						} else {
+							modifiedMessage = "/";
 						}
-					} else {
-						modifiedMessage = "/";
 					}
 		
 					if (whitelistModule.isEnabled()) {
