@@ -61,7 +61,7 @@ public class ChatListener implements Listener {
 
 					modifiedMessage = StringUtil.removeAccents(originalMessage);
 		
-					if (isCommand()) {
+					if (isCommand) {
 						if (originalMessage.contains(" ")) {
 							if (isNormalCommand) {
 								modifiedMessage = modifiedMessage.replace("/", "");
