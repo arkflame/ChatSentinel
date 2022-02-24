@@ -10,8 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.plugin.Plugin;
 
+import dev._2lstudios.chatsentinel.bukkit.ChatSentinel;
 import dev._2lstudios.chatsentinel.bukkit.modules.ModuleManager;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
@@ -26,13 +26,13 @@ import dev._2lstudios.chatsentinel.shared.utils.StringUtil;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class AsyncPlayerChatListener implements Listener {
-	private final Plugin plugin;
+	private final ChatSentinel chatSentinel;
 	private final ModuleManager moduleManager;
 	private final ChatPlayerManager chatPlayerManager;
 
-	public AsyncPlayerChatListener(final Plugin plugin, final ModuleManager moduleManager,
+	public AsyncPlayerChatListener(final ChatSentinel chatSentinel, final ModuleManager moduleManager,
 			final ChatPlayerManager chatPlayerManager) {
-		this.plugin = plugin;
+		this.chatSentinel = chatSentinel;
 		this.moduleManager = moduleManager;
 		this.chatPlayerManager = chatPlayerManager;
 	}
@@ -48,7 +48,7 @@ public class AsyncPlayerChatListener implements Listener {
 			final String modifiedMessage;
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
 			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
-			final Server server = plugin.getServer();
+			final Server server = chatSentinel.getServer();
 			final String playerName = player.getName();
 			final String lang = VersionUtil.getLocale(player);
 
@@ -127,7 +127,7 @@ public class AsyncPlayerChatListener implements Listener {
 					}
 
 					if (warns >= maxWarns && maxWarns > 0) {
-						server.getScheduler().runTask(plugin, () -> {
+						server.getScheduler().runTask(chatSentinel, () -> {
 							for (final String command : module.getCommands(placeholders)) {
 								server.dispatchCommand(server.getConsoleSender(), command);
 							}
@@ -143,7 +143,10 @@ public class AsyncPlayerChatListener implements Listener {
 			}
 
 			if (!event.isCancelled()) {
-				chatPlayer.addLastMessage(modifiedMessage, System.currentTimeMillis());
+				final long currentMillis = System.currentTimeMillis();
+
+				chatPlayer.addLastMessage(modifiedMessage, currentMillis);
+				moduleManager.getCooldownModule().setLastMessage(modifiedMessage, currentMillis);
 			}
 		}
 	}

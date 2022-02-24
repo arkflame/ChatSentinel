@@ -3,6 +3,7 @@ package dev._2lstudios.chatsentinel.bungee.listeners;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import dev._2lstudios.chatsentinel.bungee.ChatSentinel;
 import dev._2lstudios.chatsentinel.bungee.modules.ModuleManager;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
@@ -11,10 +12,10 @@ import dev._2lstudios.chatsentinel.shared.modules.BlacklistModule;
 import dev._2lstudios.chatsentinel.shared.modules.CapsModule;
 import dev._2lstudios.chatsentinel.shared.modules.CooldownModule;
 import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
+import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.utils.StringUtil;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 import net.md_5.bungee.api.CommandSender;
@@ -24,19 +25,18 @@ import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 public class ChatListener implements Listener {
-	final private Plugin plugin;
+	final private ChatSentinel chatSentinel;
 	final private ModuleManager moduleManager;
 	final private ChatPlayerManager chatPlayerManager;
 
-	public ChatListener(final Plugin plugin, final ModuleManager moduleManager,
+	public ChatListener(final ChatSentinel plugin, final ModuleManager moduleManager,
 			final ChatPlayerManager chatPlayerManager) {
-		this.plugin = plugin;
+		this.chatSentinel = plugin;
 		this.moduleManager = moduleManager;
 		this.chatPlayerManager = chatPlayerManager;
 	}
@@ -60,7 +60,7 @@ public class ChatListener implements Listener {
 					String modifiedMessage;
 
 					modifiedMessage = StringUtil.removeAccents(originalMessage);
-		
+
 					if (isCommand) {
 						if (originalMessage.contains(" ")) {
 							if (isNormalCommand) {
@@ -70,15 +70,15 @@ public class ChatListener implements Listener {
 							modifiedMessage = "/";
 						}
 					}
-		
+
 					if (whitelistModule.isEnabled()) {
 						final Pattern whitelistPattern = whitelistModule.getPattern();
-		
+
 						modifiedMessage = whitelistPattern.matcher(modifiedMessage).replaceAll("");
 					}
 
 					final MessagesModule messagesModule = moduleManager.getMessagesModule();
-					final ProxyServer server = plugin.getProxy();
+					final ProxyServer server = chatSentinel.getProxy();
 					final String playerName = player.getName(), lang = VersionUtil.getLocale(player);
 
 					for (final Module module : moduleManager.getModules()) {
@@ -165,8 +165,12 @@ public class ChatListener implements Listener {
 						}
 					}
 
-					if (!event.isCancelled())
-						chatPlayer.addLastMessage(modifiedMessage, System.currentTimeMillis());
+					if (!event.isCancelled()) {
+						final long currentMillis = System.currentTimeMillis();
+
+						chatPlayer.addLastMessage(modifiedMessage, currentMillis);
+						moduleManager.getCooldownModule().setLastMessage(modifiedMessage, currentMillis);
+					}
 				}
 			}
 		}

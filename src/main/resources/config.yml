@@ -75,6 +75,7 @@ cooldown:
 
   # Time in milliseconds.
   time:
+    repeat-global: 1000
     repeat: 10000
     normal: 1000
     command: 400

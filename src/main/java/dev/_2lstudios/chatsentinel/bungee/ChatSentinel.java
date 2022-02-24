@@ -10,7 +10,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 
 public class ChatSentinel extends Plugin {
-
+	@Override
 	public void onEnable() {
 		final ConfigUtil configUtil = new ConfigUtil(this);
 

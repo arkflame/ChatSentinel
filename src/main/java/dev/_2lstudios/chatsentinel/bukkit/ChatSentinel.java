@@ -12,7 +12,6 @@ import dev._2lstudios.chatsentinel.bukkit.utils.ConfigUtil;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 
 public class ChatSentinel extends JavaPlugin {
-
 	@Override
 	public void onEnable() {
 		final ConfigUtil configUtil = new ConfigUtil(this);
@@ -26,10 +25,5 @@ public class ChatSentinel extends JavaPlugin {
 		pluginManager.registerEvents(new ServerCommandListener(this, moduleManager, chatPlayerManager), this);
 
 		getCommand("chatsentinel").setExecutor(new ChatSentinelCommand(moduleManager, server));
-	}
-
-	@Override
-	public void onDisable() {
-		this.getServer().getScheduler().cancelTasks(this);
 	}
 }

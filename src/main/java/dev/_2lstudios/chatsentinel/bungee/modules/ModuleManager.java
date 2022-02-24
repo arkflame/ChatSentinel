@@ -52,6 +52,10 @@ public class ModuleManager {
 		return modules;
 	}
 
+    public CooldownModule getCooldownModule() {
+        return cooldownModule;
+    }
+
 	public final FloodModule getFloodModule() {
 		return floodModule;
 	}
@@ -110,7 +114,7 @@ public class ModuleManager {
 				configYml.getInt("caps.max"), configYml.getInt("caps.warn.max"),
 				configYml.getString("caps.warn.notification"),
 				configYml.getStringList("caps.punishments").toArray(new String[0]));
-		this.cooldownModule.loadData(configYml.getBoolean("cooldown.enabled"), configYml.getInt("cooldown.time.repeat"),
+		this.cooldownModule.loadData(configYml.getBoolean("cooldown.enabled"), configYml.getInt("cooldown.time.repeat-global"), configYml.getInt("cooldown.time.repeat"),
 				configYml.getInt("cooldown.time.normal"), configYml.getInt("cooldown.time.command"));
 		this.floodModule.loadData(configYml.getBoolean("flood.enabled"), configYml.getBoolean("flood.replace"),
 				configYml.getInt("flood.warn.max"), configYml.getString("flood.pattern"),
