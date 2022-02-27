@@ -8,3 +8,5 @@
 # IDE java settings
 /.classpath
 /.project
+.idea/
+*.iml

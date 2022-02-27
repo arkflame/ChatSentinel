@@ -1,0 +1,9 @@
+{
+  "id":"chatsentinel",
+  "name":"ChatSentinel",
+  "version":"0.4.2",
+  "description":"Advanced chat management plugin",
+  "author": "2LS",
+  "dependencies":[],
+  "main":"dev._2lstudios.chatsentinel.velocity.ChatSentinel"
+}

@@ -59,4 +59,18 @@ public class VersionUtil {
 
 		return "en";
 	}
+
+	public static String getLocale(final com.velocitypowered.api.proxy.Player player) {
+		final Locale locale = player.getEffectiveLocale();
+
+		if (locale != null) {
+			final String localeString = locale.toString();
+
+			if (localeString.length() > 1) {
+				return trimLocale(localeString);
+			}
+		}
+
+		return "en";
+	}
 }
