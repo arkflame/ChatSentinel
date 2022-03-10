@@ -15,6 +15,7 @@ import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 import dev._2lstudios.chatsentinel.velocity.ChatSentinel;
 import dev._2lstudios.chatsentinel.velocity.modules.ModuleManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -32,7 +33,7 @@ public class ChatListener {
 	}
 
 	private void sendMessage(final CommandSource source, final String message) {
-		source.sendMessage(Component.text(message.replace('&', '§')));
+		source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
 	}
 
 	@Subscribe
