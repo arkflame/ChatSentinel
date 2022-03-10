@@ -18,19 +18,17 @@ public class ChatSentinel {
 	private final ProxyServer proxyServer;
 	private final Logger logger;
 	private final Path dataPath;
-	private final ChatSentinel instance;
 
 	@Inject
 	public ChatSentinel(ProxyServer proxyServer, Logger logger, @DataDirectory Path dataPath) {
 		this.proxyServer = proxyServer;
 		this.logger = logger;
 		this.dataPath = dataPath;
-		instance = this;
 	}
 
 	@Subscribe
 	public void onInit(ProxyInitializeEvent event) {
-		final ConfigUtil configUtil = new ConfigUtil(instance);
+		final ConfigUtil configUtil = new ConfigUtil(this);
 
 		configUtil.create("%datafolder%/config.yml");
 		configUtil.create("%datafolder%/messages.yml");
