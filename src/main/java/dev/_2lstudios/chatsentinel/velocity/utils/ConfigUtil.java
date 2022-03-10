@@ -1,8 +1,8 @@
 package dev._2lstudios.chatsentinel.velocity.utils;
 
 import dev._2lstudios.chatsentinel.velocity.ChatSentinel;
-import org.simpleyaml.configuration.file.YamlFile;
-import org.simpleyaml.exceptions.InvalidConfigurationException;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,20 +13,21 @@ import java.util.logging.Level;
 public class ConfigUtil {
 	final private ChatSentinel chatSentinel;
 
-	public ConfigUtil() {
-		this.chatSentinel = ChatSentinel.getInstance();
+	public ConfigUtil(ChatSentinel chatSentinel) {
+		this.chatSentinel = chatSentinel;
 	}
 
-	public YamlFile get(String file) {
+	public ConfigurationNode get(String file) {
+
 		file = file.replace("%datafolder%", chatSentinel.getDataPath().toString());
 
-		final YamlFile yamlFile = new YamlFile(file);
 		try {
-			yamlFile.load();
-		} catch (InvalidConfigurationException | IOException e) {
+			YAMLConfigurationLoader loader = YAMLConfigurationLoader.builder().setPath((new File(file)).toPath()).build();
+			return loader.load();
+		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return yamlFile;
 	}
 
 	public void create(String file) {
@@ -39,7 +40,6 @@ public class ConfigUtil {
 				final String[] files = file.split("/");
 				final InputStream inputStream = chatSentinel.getClass().getClassLoader()
 						.getResourceAsStream(files[files.length - 1]);
-
 				final File parentFile = configFile.getParentFile();
 
 				if (parentFile != null)
@@ -47,14 +47,12 @@ public class ConfigUtil {
 
 				if (inputStream != null) {
 					Files.copy(inputStream, configFile.toPath());
-					chatSentinel.getLogger().log(Level.INFO, ("[%pluginname%] File " + configFile + " has been created!")
-							.replace("%pluginname%", chatSentinel.getPlugin().getDescription().getName().get()));
+					chatSentinel.getLogger().info("File " + configFile + " has been created!");
 				} else
 					configFile.createNewFile();
 			}
 		} catch (final IOException e) {
-			chatSentinel.getLogger().log(Level.INFO, ("[%pluginname%] Unable to create configuration file!")
-					.replace("%pluginname%", chatSentinel.getPlugin().getDescription().getName().get()));
+			chatSentinel.getLogger().info("Unable to create configuration file!");
 		}
 	}
 }

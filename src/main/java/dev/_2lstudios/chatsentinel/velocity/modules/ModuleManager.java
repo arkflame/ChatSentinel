@@ -1,14 +1,13 @@
 package dev._2lstudios.chatsentinel.velocity.modules;
 
+import com.google.common.reflect.TypeToken;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-
 import dev._2lstudios.chatsentinel.shared.interfaces.Module;
 import dev._2lstudios.chatsentinel.shared.modules.*;
 import dev._2lstudios.chatsentinel.velocity.utils.ConfigUtil;
-import org.simpleyaml.configuration.ConfigurationSection;
-import org.simpleyaml.configuration.file.YamlConfiguration;
-import org.simpleyaml.configuration.file.YamlFile;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -82,10 +81,10 @@ public class ModuleManager {
 		configUtil.create("%datafolder%/blacklist.yml");
 		configUtil.create("%datafolder%/whitelist.yml");
 
-		final YamlFile blacklistYml = configUtil.get("%datafolder%/blacklist.yml");
-		final YamlFile configYml = configUtil.get("%datafolder%/config.yml");
-		final YamlFile messagesYml = configUtil.get("%datafolder%/messages.yml");
-		final YamlFile whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
+		final ConfigurationNode blacklistYml = configUtil.get("%datafolder%/blacklist.yml");
+		final ConfigurationNode configYml = configUtil.get("%datafolder%/config.yml");
+		final ConfigurationNode messagesYml = configUtil.get("%datafolder%/messages.yml");
+		final ConfigurationNode whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
 		final Map<String, Map<String, String>> locales = new HashMap<>();
 		final Collection<String> playerNames = new HashSet<>();
 
@@ -93,40 +92,45 @@ public class ModuleManager {
 			playerNames.add(player.getUsername());
 		}
 
-		for (final String lang : messagesYml.getConfigurationSection("langs").getKeys(false)) {
-			final ConfigurationSection langSection = messagesYml.getConfigurationSection("langs." + lang);
-			final Map<String, String> messages = new HashMap<>();
+		try {
+			for (final String lang : messagesYml.getNode("langs").getChildrenMap().keySet().toArray(new String[0])) {
+				final ConfigurationNode langSection = messagesYml.getNode("langs", lang);
+				final Map<String, String> messages = new HashMap<>();
 
-			for (final String key : langSection.getKeys(false)) {
-				final String value = langSection.getString(key);
+				for (final String key : langSection.getChildrenMap().keySet().toArray(new String[0])) {
+					final String value = langSection.getNode(key).getString();
+					messages.put(key, value);
+				}
 
-				messages.put(key, value);
+				locales.put(lang, messages);
 			}
 
-			locales.put(lang, messages);
+			this.capsModule.loadData(configYml.getNode("caps", "enabled").getBoolean(), configYml.getNode("caps", "replace").getBoolean(),
+					configYml.getNode("caps", "max").getInt(), configYml.getNode("caps", "warn", "max").getInt(),
+					configYml.getNode("caps", "warn", "notification").getString(),
+					configYml.getNode("caps", "punishments").getList(new TypeToken<String>(){}).toArray(new String[0]));
+			this.cooldownModule.loadData(configYml.getNode("cooldown", "enabled").getBoolean(), configYml.getNode("cooldown", "time", "repeat-global").getInt(),
+					configYml.getNode("cooldown", "time", "repeat").getInt(), configYml.getNode("cooldown", "time", "normal").getInt(),
+					configYml.getNode("cooldown", "time", "command").getInt());
+			this.floodModule.loadData(configYml.getNode("flood", "enabled").getBoolean(), configYml.getNode("flood", "replace").getBoolean(),
+					configYml.getNode("flood", "warn", "max").getInt(), configYml.getNode("flood", "pattern").getString(),
+					configYml.getNode("flood", "warn", "notification").getString(),
+					configYml.getNode("flood", "punishments").getList(new TypeToken<String>(){}).toArray(new String[0]));
+			this.messagesModule.loadData(messagesYml.getNode("default").getString(), locales);
+			this.generalModule.loadData(configYml.getNode("general", "commands").getList(new TypeToken<String>(){}));
+			this.whitelistModule.loadData(configYml.getNode("whitelist", "enabled").getBoolean(),
+					whitelistYml.getNode("expressions").getList(new TypeToken<String>(){}).toArray(new String[0]));
+			this.blacklistModule.loadData(configYml.getNode("blacklist", "enabled").getBoolean(),
+					configYml.getNode("blacklist", "fake_message").getBoolean(), configYml.getNode("blacklist", "hide_words").getBoolean(),
+					configYml.getNode("blacklist", "warn", "max").getInt(), configYml.getNode("blacklist", "warn", "notification").getString(),
+					configYml.getNode("blacklist", "punishments").getList(new TypeToken<String>(){}).toArray(new String[0]),
+					blacklistYml.getNode("expressions").getList(new TypeToken<String>(){}).toArray(new String[0]));
+			this.syntaxModule.loadData(configYml.getNode("syntax", "enabled").getBoolean(), configYml.getNode("syntax", "warn", "max").getInt(),
+					configYml.getNode("syntax", "warn", "notification").getString(),
+					configYml.getNode("syntax", "whitelist").getList(new TypeToken<String>(){}).toArray(new String[0]),
+					configYml.getNode("syntax", "punisments").getList(new TypeToken<String>(){}).toArray(new String[0]));
+		} catch (ObjectMappingException e) {
+			e.printStackTrace();
 		}
-
-		this.capsModule.loadData(configYml.getBoolean("caps.enabled"), configYml.getBoolean("caps.replace"),
-				configYml.getInt("caps.max"), configYml.getInt("caps.warn.max"),
-				configYml.getString("caps.warn.notification"),
-				configYml.getStringList("caps.punishments").toArray(new String[0]));
-		this.cooldownModule.loadData(configYml.getBoolean("cooldown.enabled"), configYml.getInt("cooldown.time.repeat-global"), configYml.getInt("cooldown.time.repeat"),
-				configYml.getInt("cooldown.time.normal"), configYml.getInt("cooldown.time.command"));
-		this.floodModule.loadData(configYml.getBoolean("flood.enabled"), configYml.getBoolean("flood.replace"),
-				configYml.getInt("flood.warn.max"), configYml.getString("flood.pattern"),
-				configYml.getString("flood.warn.notification"),
-				configYml.getStringList("flood.punishments").toArray(new String[0]));
-		this.messagesModule.loadData(messagesYml.getString("default"), locales);
-		this.generalModule.loadData(configYml.getStringList("general.commands"));
-		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"), whitelistYml.getStringList("expressions").toArray(new String[0]));
-		this.blacklistModule.loadData(configYml.getBoolean("blacklist.enabled"),
-				configYml.getBoolean("blacklist.fake_message"), configYml.getBoolean("blacklist.hide_words"),
-				configYml.getInt("blacklist.warn.max"), configYml.getString("blacklist.warn.notification"),
-				configYml.getStringList("blacklist.punishments").toArray(new String[0]),
-				blacklistYml.getStringList("expressions").toArray(new String[0]));
-		this.syntaxModule.loadData(configYml.getBoolean("syntax.enabled"), configYml.getInt("syntax.warn.max"),
-				configYml.getString("syntax.warn.notification"),
-				configYml.getStringList("syntax.whitelist").toArray(new String[0]),
-				configYml.getStringList("syntax.punisments").toArray(new String[0]));
 	}
 }
