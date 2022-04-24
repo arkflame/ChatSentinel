@@ -3,14 +3,10 @@ package dev._2lstudios.chatsentinel.shared.utils;
 import java.text.Normalizer;
 
 public class StringUtil {
-    public static String sanitize(final String name) {
-        return name.replaceAll("[^a-zA-Z0-9]", "");
-	}
-
-    public static String removeAccents(String message) {
-		/*
-		 * Removes accents Credit: https://stackoverflow.com/users/636009/david-conrad
-		 */
+	/*
+	* Removes non latin words Credit: https://stackoverflow.com/users/636009/david-conrad
+	*/
+    public static String sanitize(String message) {
 		final char[] out = new char[message.length()];
 
 		message = Normalizer.normalize(message, Normalizer.Form.NFD);

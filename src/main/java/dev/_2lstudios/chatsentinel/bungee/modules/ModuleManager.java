@@ -52,9 +52,9 @@ public class ModuleManager {
 		return modules;
 	}
 
-    public CooldownModule getCooldownModule() {
-        return cooldownModule;
-    }
+	public CooldownModule getCooldownModule() {
+		return cooldownModule;
+	}
 
 	public final FloodModule getFloodModule() {
 		return floodModule;
@@ -114,15 +114,18 @@ public class ModuleManager {
 				configYml.getInt("caps.max"), configYml.getInt("caps.warn.max"),
 				configYml.getString("caps.warn.notification"),
 				configYml.getStringList("caps.punishments").toArray(new String[0]));
-		this.cooldownModule.loadData(configYml.getBoolean("cooldown.enabled"), configYml.getInt("cooldown.time.repeat-global"), configYml.getInt("cooldown.time.repeat"),
+		this.cooldownModule.loadData(configYml.getBoolean("cooldown.enabled"),
+				configYml.getInt("cooldown.time.repeat-global"), configYml.getInt("cooldown.time.repeat"),
 				configYml.getInt("cooldown.time.normal"), configYml.getInt("cooldown.time.command"));
 		this.floodModule.loadData(configYml.getBoolean("flood.enabled"), configYml.getBoolean("flood.replace"),
 				configYml.getInt("flood.warn.max"), configYml.getString("flood.pattern"),
 				configYml.getString("flood.warn.notification"),
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
 		this.messagesModule.loadData(messagesYml.getString("default"), locales);
-		this.generalModule.loadData(configYml.getStringList("general.commands"));
-		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"), whitelistYml.getStringList("expressions").toArray(new String[0]));
+		this.generalModule.loadData(configYml.getBoolean("general.sanitize"),
+				configYml.getStringList("general.commands"));
+		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"),
+				whitelistYml.getStringList("expressions").toArray(new String[0]));
 		this.blacklistModule.loadData(configYml.getBoolean("blacklist.enabled"),
 				configYml.getBoolean("blacklist.fake_message"), configYml.getBoolean("blacklist.hide_words"),
 				configYml.getInt("blacklist.warn.max"), configYml.getString("blacklist.warn.notification"),

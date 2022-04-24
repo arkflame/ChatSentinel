@@ -57,25 +57,30 @@ public class ChatListener implements Listener {
 					final String originalMessage = event.getMessage().trim();
 					final boolean isCommand = event.isCommand();
 					final boolean isNormalCommand = generalModule.isCommand(originalMessage);
-					String modifiedMessage;
-
-					modifiedMessage = StringUtil.removeAccents(originalMessage);
+					String message = originalMessage;
 
 					if (isCommand) {
 						if (originalMessage.contains(" ")) {
 							if (isNormalCommand) {
-								modifiedMessage = modifiedMessage.replace("/", "");
+								message = message.replace("/", "");
 							}
 						} else {
-							modifiedMessage = "/";
+							message = "/";
 						}
+					}
+
+					if (generalModule.isSanitizeEnabled()) {
+						message = StringUtil.sanitize(message);
 					}
 
 					if (whitelistModule.isEnabled()) {
 						final Pattern whitelistPattern = whitelistModule.getPattern();
 
-						modifiedMessage = whitelistPattern.matcher(modifiedMessage).replaceAll("");
+						message = whitelistPattern.matcher(message)
+								.replaceAll("");
 					}
+
+					message = message.trim();
 
 					final MessagesModule messagesModule = moduleManager.getMessagesModule();
 					final ProxyServer server = chatSentinel.getProxy();
@@ -85,7 +90,7 @@ public class ChatListener implements Listener {
 						if (!player.hasPermission("chatsentinel.bypass." + module.getName())
 								&& (!isCommand || module instanceof CooldownModule || module instanceof SyntaxModule
 										|| isNormalCommand)
-								&& module.meetsCondition(chatPlayer, modifiedMessage)) {
+								&& module.meetsCondition(chatPlayer, message)) {
 							final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
 							final String[][] placeholders = {
 									{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" },
@@ -97,7 +102,7 @@ public class ChatListener implements Listener {
 
 								if (blacklistModule.isHideWords()) {
 									event.setMessage(
-											blacklistModule.getPattern().matcher(modifiedMessage).replaceAll("***"));
+											blacklistModule.getPattern().matcher(message).replaceAll("***"));
 								} else
 									event.setCancelled(true);
 							} else if (module instanceof CapsModule) {
@@ -168,8 +173,8 @@ public class ChatListener implements Listener {
 					if (!event.isCancelled()) {
 						final long currentMillis = System.currentTimeMillis();
 
-						chatPlayer.addLastMessage(modifiedMessage, currentMillis);
-						moduleManager.getCooldownModule().setLastMessage(modifiedMessage, currentMillis);
+						chatPlayer.addLastMessage(message, currentMillis);
+						moduleManager.getCooldownModule().setLastMessage(message, currentMillis);
 					}
 				}
 			}

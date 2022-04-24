@@ -47,25 +47,30 @@ public class ServerCommandListener implements Listener {
 			final GeneralModule generalModule = moduleManager.getGeneralModule();
 			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
-			final String originalMessage = event.getMessage().trim();
+			final String originalMessage = event.getMessage();
 			final boolean isNormalCommand = generalModule.isCommand(originalMessage);
-			String modifiedMessage;
-
-			modifiedMessage = StringUtil.removeAccents(originalMessage);
+			String message = originalMessage;
 
 			if (originalMessage.contains(" ")) {
 				if (isNormalCommand) {
-					modifiedMessage = modifiedMessage.replace("/", "");
+					message = message.replace("/", "");
 				}
 			} else {
-				modifiedMessage = "/";
+				message = "/";
+			}
+
+			if (generalModule.isSanitizeEnabled()) {
+				message = StringUtil.sanitize(message);
 			}
 
 			if (whitelistModule.isEnabled()) {
 				final Pattern whitelistPattern = whitelistModule.getPattern();
 
-				modifiedMessage = whitelistPattern.matcher(modifiedMessage).replaceAll("");
+				message = whitelistPattern.matcher(message)
+						.replaceAll("");
 			}
+
+			message = message.trim();
 
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
 			final Server server = plugin.getServer();
@@ -75,7 +80,7 @@ public class ServerCommandListener implements Listener {
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())
 						&& (module instanceof CooldownModule || module instanceof SyntaxModule || isNormalCommand)
-						&& module.meetsCondition(chatPlayer, modifiedMessage)) {
+						&& module.meetsCondition(chatPlayer, message)) {
 					final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
 					final String[][] placeholders = {
 							{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" },
@@ -86,7 +91,7 @@ public class ServerCommandListener implements Listener {
 						final BlacklistModule blacklistModule = (BlacklistModule) module;
 
 						if (blacklistModule.isHideWords()) {
-							event.setMessage(blacklistModule.getPattern().matcher(modifiedMessage).replaceAll("***"));
+							event.setMessage(blacklistModule.getPattern().matcher(message).replaceAll("***"));
 						} else
 							event.setCancelled(true);
 					} else if (module instanceof CapsModule) {
@@ -98,7 +103,7 @@ public class ServerCommandListener implements Listener {
 							event.setCancelled(true);
 					} else if (module instanceof CooldownModule) {
 						placeholders[1][4] = String
-								.valueOf(((CooldownModule) module).getRemainingTime(chatPlayer, modifiedMessage));
+								.valueOf(((CooldownModule) module).getRemainingTime(chatPlayer, message));
 
 						event.setCancelled(true);
 					} else if (module instanceof FloodModule) {
@@ -148,7 +153,7 @@ public class ServerCommandListener implements Listener {
 			}
 
 			if (!event.isCancelled()) {
-				chatPlayer.addLastMessage(modifiedMessage, System.currentTimeMillis());
+				chatPlayer.addLastMessage(message, System.currentTimeMillis());
 			}
 		}
 	}

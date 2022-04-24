@@ -4,6 +4,9 @@ whitelist:
   enabled: true
 
 general:
+  # Remove all non-english characters from messages. (Improves detection)
+  sanitize: true
+
   # Commands that will be threated as normal messages
   commands:
     - /broadcast

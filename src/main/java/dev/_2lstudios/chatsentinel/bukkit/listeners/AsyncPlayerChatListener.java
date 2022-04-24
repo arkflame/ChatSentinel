@@ -20,6 +20,7 @@ import dev._2lstudios.chatsentinel.shared.modules.BlacklistModule;
 import dev._2lstudios.chatsentinel.shared.modules.CapsModule;
 import dev._2lstudios.chatsentinel.shared.modules.CooldownModule;
 import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
+import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
 import dev._2lstudios.chatsentinel.shared.utils.StringUtil;
@@ -44,30 +45,35 @@ public class AsyncPlayerChatListener implements Listener {
 		if (!player.hasPermission("chatsentinel.bypass")) {
 			final UUID uuid = player.getUniqueId();
 			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
-			final String message = event.getMessage().trim();
-			final String modifiedMessage;
+			final String originalMessage = event.getMessage();
+			final GeneralModule generalModule = moduleManager.getGeneralModule();
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
 			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 			final Server server = chatSentinel.getServer();
 			final String playerName = player.getName();
 			final String lang = VersionUtil.getLocale(player);
+			String message = originalMessage;
+
+			if (generalModule.isSanitizeEnabled()) {
+				message = StringUtil.sanitize(message);
+			}
 
 			if (whitelistModule.isEnabled()) {
 				final Pattern whitelistPattern = whitelistModule.getPattern();
 
-				modifiedMessage = whitelistPattern.matcher(StringUtil.removeAccents(message))
-						.replaceAll("").trim();
-			} else {
-				modifiedMessage = StringUtil.removeAccents(message);
+				message = whitelistPattern.matcher(message)
+						.replaceAll("");
 			}
+
+			message = message.trim();
 
 			for (final Module module : moduleManager.getModules()) {
 				if (!player.hasPermission("chatsentinel.bypass." + module.getName())
-						&& module.meetsCondition(chatPlayer, modifiedMessage)) {
+						&& module.meetsCondition(chatPlayer, message)) {
 					final Collection<Player> recipients = event.getRecipients();
 					final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
 					final String[][] placeholders = {
-							{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" }, { playerName, message,
+							{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" }, { playerName, originalMessage,
 									String.valueOf(warns), String.valueOf(module.getMaxWarns()), String.valueOf(0) } };
 
 					if (module instanceof BlacklistModule) {
@@ -76,7 +82,7 @@ public class AsyncPlayerChatListener implements Listener {
 						if (blacklistModule.isFakeMessage()) {
 							recipients.removeIf(player1 -> player1 != player);
 						} else if (blacklistModule.isHideWords()) {
-							event.setMessage(blacklistModule.getPattern().matcher(modifiedMessage).replaceAll("***"));
+							event.setMessage(blacklistModule.getPattern().matcher(message).replaceAll("***"));
 						} else {
 							event.setCancelled(true);
 						}
@@ -84,7 +90,7 @@ public class AsyncPlayerChatListener implements Listener {
 						final CapsModule capsModule = (CapsModule) module;
 
 						if (capsModule.isReplace()) {
-							event.setMessage(message.toLowerCase());
+							event.setMessage(originalMessage.toLowerCase());
 						} else {
 							event.setCancelled(true);
 						}
@@ -97,7 +103,7 @@ public class AsyncPlayerChatListener implements Listener {
 						final FloodModule floodModule = (FloodModule) module;
 
 						if (floodModule.isReplace()) {
-							final String replacedString = floodModule.replace(message);
+							final String replacedString = floodModule.replace(originalMessage);
 
 							if (!replacedString.isEmpty()) {
 								event.setMessage(replacedString);
@@ -143,10 +149,11 @@ public class AsyncPlayerChatListener implements Listener {
 			}
 
 			if (!event.isCancelled()) {
+				final CooldownModule cooldownModule = moduleManager.getCooldownModule();
 				final long currentMillis = System.currentTimeMillis();
 
-				chatPlayer.addLastMessage(modifiedMessage, currentMillis);
-				moduleManager.getCooldownModule().setLastMessage(modifiedMessage, currentMillis);
+				chatPlayer.addLastMessage(message, currentMillis);
+				cooldownModule.setLastMessage(message, currentMillis);
 			}
 		}
 	}
