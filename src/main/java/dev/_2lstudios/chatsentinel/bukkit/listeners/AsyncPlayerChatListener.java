@@ -23,7 +23,6 @@ import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
 import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.utils.StringUtil;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class AsyncPlayerChatListener implements Listener {
@@ -55,7 +54,11 @@ public class AsyncPlayerChatListener implements Listener {
 			String message = originalMessage;
 
 			if (generalModule.isSanitizeEnabled()) {
-				message = StringUtil.sanitize(message);
+				message = generalModule.sanitize(message);
+			}
+
+			if (generalModule.isSanitizeNames()) {
+				message = generalModule.sanitizeNames(server, message);
 			}
 
 			if (whitelistModule.isEnabled()) {

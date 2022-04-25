@@ -4,8 +4,12 @@ whitelist:
   enabled: true
 
 general:
-  # Remove all non-english characters from messages. (Improves detection)
+  # Internally remove all non-latin characters from messages. (Improves detection)
+  # If your server uses non-latin characters you might want to disable this.
   sanitize: true
+
+  # Internally remove all names from messages before checking. (Reduces false positives)
+  sanitize-names: true
 
   # Commands that will be threated as normal messages
   commands:

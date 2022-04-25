@@ -23,7 +23,6 @@ import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.utils.StringUtil;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class ServerCommandListener implements Listener {
@@ -43,6 +42,7 @@ public class ServerCommandListener implements Listener {
 		final Player player = event.getPlayer();
 
 		if (!player.hasPermission("chatsentinel.bypass")) {
+			final Server server = plugin.getServer();
 			final UUID uuid = player.getUniqueId();
 			final GeneralModule generalModule = moduleManager.getGeneralModule();
 			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
@@ -60,7 +60,11 @@ public class ServerCommandListener implements Listener {
 			}
 
 			if (generalModule.isSanitizeEnabled()) {
-				message = StringUtil.sanitize(message);
+				message = generalModule.sanitize(message);
+			}
+
+			if (generalModule.isSanitizeNames()) {
+				message = generalModule.sanitizeNames(server, message);
 			}
 
 			if (whitelistModule.isEnabled()) {
@@ -73,7 +77,6 @@ public class ServerCommandListener implements Listener {
 			message = message.trim();
 
 			final MessagesModule messagesModule = moduleManager.getMessagesModule();
-			final Server server = plugin.getServer();
 			final String playerName = player.getName();
 			final String lang = VersionUtil.getLocale(player);
 

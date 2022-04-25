@@ -1,14 +1,10 @@
 package dev._2lstudios.chatsentinel.bukkit.modules;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
-import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 
 import dev._2lstudios.chatsentinel.bukkit.utils.ConfigUtil;
 import dev._2lstudios.chatsentinel.shared.interfaces.Module;
@@ -16,13 +12,12 @@ import dev._2lstudios.chatsentinel.shared.modules.BlacklistModule;
 import dev._2lstudios.chatsentinel.shared.modules.CapsModule;
 import dev._2lstudios.chatsentinel.shared.modules.CooldownModule;
 import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
+import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 
 public class ModuleManager {
-	private final Server server;
 	private final ConfigUtil configUtil;
 	private final Module[] modules;
 	private final CapsModule capsModule;
@@ -34,8 +29,7 @@ public class ModuleManager {
 	private final SyntaxModule syntaxModule;
 	private final WhitelistModule whitelistModule;
 
-	public ModuleManager(final Server server, final ConfigUtil configUtil) {
-		this.server = server;
+	public ModuleManager(final ConfigUtil configUtil) {
 		this.configUtil = configUtil;
 		this.modules = new Module[5];
 		this.modules[0] = this.capsModule = new CapsModule();
@@ -93,11 +87,6 @@ public class ModuleManager {
 		final Configuration messagesYml = configUtil.get("%datafolder%/messages.yml");
 		final Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
 		final Map<String, Map<String, String>> locales = new HashMap<>();
-		final Collection<String> playerNames = new HashSet<>();
-
-		for (final Player player : server.getOnlinePlayers()) {
-			playerNames.add(player.getName());
-		}
 
 		for (final String lang : messagesYml.getConfigurationSection("langs").getKeys(false)) {
 			final ConfigurationSection langSection = messagesYml.getConfigurationSection("langs." + lang);
@@ -125,6 +114,7 @@ public class ModuleManager {
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
 		this.messagesModule.loadData(messagesYml.getString("default"), locales);
 		this.generalModule.loadData(configYml.getBoolean("general.sanitize", true),
+				configYml.getBoolean("general.sanitize-names", true),
 				configYml.getStringList("general.commands"));
 		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"),
 				whitelistYml.getStringList("expressions").toArray(new String[0]));

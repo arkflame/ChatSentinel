@@ -20,7 +20,7 @@ public class ChatSentinel extends Plugin {
 		configUtil.create("%datafolder%/blacklist.yml");
 
 		final ProxyServer server = getProxy();
-		final ModuleManager moduleManager = new ModuleManager(server, configUtil);
+		final ModuleManager moduleManager = new ModuleManager(configUtil);
 		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
 		final PluginManager pluginManager = server.getPluginManager();
 

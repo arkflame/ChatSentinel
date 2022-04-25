@@ -17,7 +17,7 @@ public class ChatSentinel extends JavaPlugin {
 		final ConfigUtil configUtil = new ConfigUtil(this);
 		final Server server = getServer();
 
-		final ModuleManager moduleManager = new ModuleManager(server, configUtil);
+		final ModuleManager moduleManager = new ModuleManager(configUtil);
 		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
 		final PluginManager pluginManager = server.getPluginManager();
 

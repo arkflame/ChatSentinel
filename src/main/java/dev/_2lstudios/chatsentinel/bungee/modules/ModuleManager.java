@@ -1,8 +1,6 @@
 package dev._2lstudios.chatsentinel.bungee.modules;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import dev._2lstudios.chatsentinel.bungee.utils.ConfigUtil;
@@ -11,16 +9,13 @@ import dev._2lstudios.chatsentinel.shared.modules.BlacklistModule;
 import dev._2lstudios.chatsentinel.shared.modules.CapsModule;
 import dev._2lstudios.chatsentinel.shared.modules.CooldownModule;
 import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
+import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.config.Configuration;
 
 public class ModuleManager {
-	private final ProxyServer server;
 	private final ConfigUtil configUtil;
 	private final Module[] modules;
 	private final CapsModule capsModule;
@@ -32,8 +27,7 @@ public class ModuleManager {
 	private final SyntaxModule syntaxModule;
 	private final WhitelistModule whitelistModule;
 
-	public ModuleManager(final ProxyServer server, final ConfigUtil configUtil) {
-		this.server = server;
+	public ModuleManager(final ConfigUtil configUtil) {
 		this.configUtil = configUtil;
 		this.modules = new Module[5];
 		this.modules[0] = this.capsModule = new CapsModule();
@@ -91,11 +85,6 @@ public class ModuleManager {
 		final Configuration messagesYml = configUtil.get("%datafolder%/messages.yml");
 		final Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
 		final Map<String, Map<String, String>> locales = new HashMap<>();
-		final Collection<String> playerNames = new HashSet<>();
-
-		for (final ProxiedPlayer player : server.getPlayers()) {
-			playerNames.add(player.getName());
-		}
 
 		for (final String lang : messagesYml.getSection("langs").getKeys()) {
 			final Configuration langSection = messagesYml.getSection("langs." + lang);
@@ -122,7 +111,7 @@ public class ModuleManager {
 				configYml.getString("flood.warn.notification"),
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
 		this.messagesModule.loadData(messagesYml.getString("default"), locales);
-		this.generalModule.loadData(configYml.getBoolean("general.sanitize", true),
+		this.generalModule.loadData(configYml.getBoolean("general.sanitize", true), configYml.getBoolean("general.sanitize-names", true),
 				configYml.getStringList("general.commands"));
 		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"),
 				whitelistYml.getStringList("expressions").toArray(new String[0]));

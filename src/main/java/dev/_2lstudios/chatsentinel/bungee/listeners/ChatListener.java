@@ -3,7 +3,6 @@ package dev._2lstudios.chatsentinel.bungee.listeners;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import dev._2lstudios.chatsentinel.bungee.ChatSentinel;
 import dev._2lstudios.chatsentinel.bungee.modules.ModuleManager;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
@@ -16,7 +15,6 @@ import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.utils.StringUtil;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -25,18 +23,19 @@ import net.md_5.bungee.api.connection.Connection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
 public class ChatListener implements Listener {
-	final private ChatSentinel chatSentinel;
+	final private Plugin plugin;
 	final private ModuleManager moduleManager;
 	final private ChatPlayerManager chatPlayerManager;
 
-	public ChatListener(final ChatSentinel plugin, final ModuleManager moduleManager,
+	public ChatListener(final Plugin plugin, final ModuleManager moduleManager,
 			final ChatPlayerManager chatPlayerManager) {
-		this.chatSentinel = plugin;
+		this.plugin = plugin;
 		this.moduleManager = moduleManager;
 		this.chatPlayerManager = chatPlayerManager;
 	}
@@ -50,6 +49,7 @@ public class ChatListener implements Listener {
 				final ProxiedPlayer player = (ProxiedPlayer) sender;
 
 				if (!player.hasPermission("chatsentinel.bypass")) {
+					final ProxyServer server = plugin.getProxy();
 					final UUID uuid = player.getUniqueId();
 					final GeneralModule generalModule = moduleManager.getGeneralModule();
 					final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
@@ -70,7 +70,11 @@ public class ChatListener implements Listener {
 					}
 
 					if (generalModule.isSanitizeEnabled()) {
-						message = StringUtil.sanitize(message);
+						message = generalModule.sanitize(message);
+					}
+		
+					if (generalModule.isSanitizeNames()) {
+						message = generalModule.sanitizeNames(server, message);
 					}
 
 					if (whitelistModule.isEnabled()) {
@@ -83,7 +87,6 @@ public class ChatListener implements Listener {
 					message = message.trim();
 
 					final MessagesModule messagesModule = moduleManager.getMessagesModule();
-					final ProxyServer server = chatSentinel.getProxy();
 					final String playerName = player.getName(), lang = VersionUtil.getLocale(player);
 
 					for (final Module module : moduleManager.getModules()) {
