@@ -9,7 +9,8 @@ public class CooldownModule implements Module {
 	private long lastMessageTime = 0L;
 	private String lastMessage = "";
 
-	final public void loadData(final boolean enabled, final int repeatTimeGlobal, final int repeatTime, final int normalTime,
+	final public void loadData(final boolean enabled, final int repeatTimeGlobal, final int repeatTime,
+			final int normalTime,
 			final int commandTime) {
 		this.enabled = enabled;
 		this.repeatTimeGlobal = repeatTimeGlobal;
@@ -35,7 +36,9 @@ public class CooldownModule implements Module {
 				remainingTime = this.normalTime - lastMessageTime;
 			}
 
-			return ((float) (remainingTime / 100)) / 10;
+			if (remainingTime > 0) {
+				return ((float) (remainingTime / 100)) / 10;
+			}
 		}
 
 		return 0;
@@ -43,7 +46,7 @@ public class CooldownModule implements Module {
 
 	@Override
 	public boolean meetsCondition(final ChatPlayer chatPlayer, final String message) {
-		return (getRemainingTime(chatPlayer, message) > 0);
+		return getRemainingTime(chatPlayer, message) > 0;
 	}
 
 	@Override
@@ -66,8 +69,8 @@ public class CooldownModule implements Module {
 		return 0;
 	}
 
-    public void setLastMessage(String lastMessage, long lastMessageTime) {
+	public void setLastMessage(String lastMessage, long lastMessageTime) {
 		this.lastMessage = lastMessage;
 		this.lastMessageTime = lastMessageTime;
-    }
+	}
 }

@@ -95,7 +95,7 @@ public class ChatListener implements Listener {
 							final String[][] placeholders = {
 									{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%", "%server%" },
 									{ playerName, originalMessage, String.valueOf(warns),
-											String.valueOf(module.getMaxWarns()), String.valueOf(0), server.getName() } };
+											String.valueOf(module.getMaxWarns()), String.valueOf(0), player.getServer().getInfo().getName() } };
 
 							if (module instanceof BlacklistModule) {
 								final BlacklistModule blacklistModule = (BlacklistModule) module;
