@@ -124,7 +124,7 @@ public class ModuleManager {
 				configYml.getString("flood.warn.notification"),
 				configYml.getStringList("flood.punishments").toArray(new String[0]));
 		this.messagesModule.loadData(messagesYml.getString("default"), locales);
-		this.generalModule.loadData(configYml.getBoolean("general.sanitize"),
+		this.generalModule.loadData(configYml.getBoolean("general.sanitize", true),
 				configYml.getStringList("general.commands"));
 		this.whitelistModule.loadData(configYml.getBoolean("whitelist.enabled"),
 				whitelistYml.getStringList("expressions").toArray(new String[0]));
