@@ -59,14 +59,10 @@ public class ChatListener implements Listener {
 					final boolean isNormalCommand = generalModule.isCommand(originalMessage);
 					String message = originalMessage;
 
-					if (isCommand) {
-						if (originalMessage.contains(" ")) {
-							if (isNormalCommand) {
-								message = message.replace("/", "");
-							}
-						} else {
-							message = "/";
-						}
+					if (isCommand && isNormalCommand && originalMessage.contains(" ")) {
+						message = message.substring(message.indexOf(" "));
+					} else {
+						return;
 					}
 
 					if (generalModule.isSanitizeEnabled()) {

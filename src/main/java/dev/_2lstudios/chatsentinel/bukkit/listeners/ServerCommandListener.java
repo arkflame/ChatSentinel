@@ -51,12 +51,10 @@ public class ServerCommandListener implements Listener {
 			final boolean isNormalCommand = generalModule.isCommand(originalMessage);
 			String message = originalMessage;
 
-			if (originalMessage.contains(" ")) {
-				if (isNormalCommand) {
-					message = message.replace("/", "");
-				}
+			if (isNormalCommand && originalMessage.contains(" ")) {
+				message = message.substring(message.indexOf(" "));
 			} else {
-				message = "/";
+				return;
 			}
 
 			if (generalModule.isSanitizeEnabled()) {
