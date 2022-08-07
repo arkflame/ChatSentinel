@@ -146,8 +146,6 @@ public class ChatListener implements Listener {
 
 					if (isCommand && isNormalCommand && originalMessage.contains(" ")) {
 						message = message.substring(message.indexOf(" "));
-					} else {
-						return;
 					}
 
 					if (generalModule.isSanitizeEnabled()) {
