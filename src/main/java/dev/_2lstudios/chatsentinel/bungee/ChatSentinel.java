@@ -2,7 +2,7 @@ package dev._2lstudios.chatsentinel.bungee;
 
 import dev._2lstudios.chatsentinel.bungee.commands.ChatSentinelCommand;
 import dev._2lstudios.chatsentinel.bungee.listeners.ChatListener;
-import dev._2lstudios.chatsentinel.bungee.modules.ModuleManager;
+import dev._2lstudios.chatsentinel.bungee.modules.BungeeModuleManager;
 import dev._2lstudios.chatsentinel.bungee.utils.ConfigUtil;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 import net.md_5.bungee.api.ProxyServer;
@@ -20,7 +20,7 @@ public class ChatSentinel extends Plugin {
 		configUtil.create("%datafolder%/blacklist.yml");
 
 		final ProxyServer server = getProxy();
-		final ModuleManager moduleManager = new ModuleManager(configUtil);
+		final BungeeModuleManager moduleManager = new BungeeModuleManager(configUtil);
 		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
 		final PluginManager pluginManager = server.getPluginManager();
 

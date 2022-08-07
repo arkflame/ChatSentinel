@@ -7,7 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import dev._2lstudios.chatsentinel.bukkit.commands.ChatSentinelCommand;
 import dev._2lstudios.chatsentinel.bukkit.listeners.AsyncPlayerChatListener;
 import dev._2lstudios.chatsentinel.bukkit.listeners.ServerCommandListener;
-import dev._2lstudios.chatsentinel.bukkit.modules.ModuleManager;
+import dev._2lstudios.chatsentinel.bukkit.modules.BukkitModuleManager;
 import dev._2lstudios.chatsentinel.bukkit.utils.ConfigUtil;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 
@@ -17,7 +17,7 @@ public class ChatSentinel extends JavaPlugin {
 		final ConfigUtil configUtil = new ConfigUtil(this);
 		final Server server = getServer();
 
-		final ModuleManager moduleManager = new ModuleManager(configUtil);
+		final BukkitModuleManager moduleManager = new BukkitModuleManager(configUtil);
 		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
 		final PluginManager pluginManager = server.getPluginManager();
 

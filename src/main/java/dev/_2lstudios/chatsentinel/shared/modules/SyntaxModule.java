@@ -30,7 +30,7 @@ public class SyntaxModule implements Module {
 
 	@Override
 	public boolean meetsCondition(final ChatPlayer chatPlayer, final String message) {
-		return (enabled && hasSyntax(message) && !isWhitelisted(message));
+		return (enabled && !isWhitelisted(message) && hasSyntax(message));
 	}
 
 	@Override
@@ -67,8 +67,14 @@ public class SyntaxModule implements Module {
 
 	private boolean hasSyntax(final String message) {
 		if (message.startsWith("/")) {
-			final String[] subCommands = message.split(" ");
-			final String command = subCommands[0];
+			final String command;
+
+			if (message.contains(" ")) {
+				command = message.split(" ")[0];
+			} else {
+				command = message;
+			}
+
 			final String[] syntax = command.split(":");
 
 			if (syntax.length > 1)

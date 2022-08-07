@@ -6,15 +6,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import dev._2lstudios.chatsentinel.bukkit.modules.ModuleManager;
+import dev._2lstudios.chatsentinel.bukkit.modules.BukkitModuleManager;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class ChatSentinelCommand implements CommandExecutor {
-	private final ModuleManager moduleManager;
+	private final BukkitModuleManager moduleManager;
 	private final Server server;
 
-	public ChatSentinelCommand(final ModuleManager moduleManager, final Server server) {
+	public ChatSentinelCommand(final BukkitModuleManager moduleManager, final Server server) {
 		this.moduleManager = moduleManager;
 		this.server = server;
 	}

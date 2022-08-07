@@ -1,6 +1,6 @@
 package dev._2lstudios.chatsentinel.bungee.commands;
 
-import dev._2lstudios.chatsentinel.bungee.modules.ModuleManager;
+import dev._2lstudios.chatsentinel.bungee.modules.BungeeModuleManager;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 import net.md_5.bungee.api.CommandSender;
@@ -10,10 +10,10 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class ChatSentinelCommand extends Command {
-	private final ModuleManager moduleManager;
+	private final BungeeModuleManager moduleManager;
 	private final ProxyServer server;
 
-	public ChatSentinelCommand(final ModuleManager moduleManager, final ProxyServer server) {
+	public ChatSentinelCommand(final BungeeModuleManager moduleManager, final ProxyServer server) {
 		super("chatsentinel");
 		this.moduleManager = moduleManager;
 		this.server = server;

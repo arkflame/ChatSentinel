@@ -1,6 +1,5 @@
 package dev._2lstudios.chatsentinel.shared.modules;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
@@ -29,15 +28,7 @@ public class FloodModule implements Module {
 	}
 
 	final public String replace(String string) {
-		final Matcher matcher = pattern.matcher(string);
-
-		if (matcher.find()) {
-			final String group = matcher.group();
-
-			string.replace(group.substring(0, group.length()), "");
-		}
-
-		return string;
+		return pattern.matcher(string).replaceAll("");
 	}
 
 	@Override
