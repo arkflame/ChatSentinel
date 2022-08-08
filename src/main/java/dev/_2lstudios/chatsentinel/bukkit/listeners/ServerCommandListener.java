@@ -56,14 +56,14 @@ public class ServerCommandListener implements Listener {
 					final BlacklistModule blacklistModule = (BlacklistModule) module;
 
 					if (blacklistModule.isHideWords()) {
-						event.setMessage(blacklistModule.getPattern().matcher(message).replaceAll("***"));
+						event.setMessage(blacklistModule.getPattern().matcher(event.getMessage()).replaceAll("***"));
 					} else
 						event.setCancelled(true);
 				} else if (module instanceof CapsModule) {
 					final CapsModule capsModule = (CapsModule) module;
 
 					if (capsModule.isReplace())
-						event.setMessage(originalMessage.toLowerCase());
+						event.setMessage(event.getMessage().toLowerCase());
 					else
 						event.setCancelled(true);
 				} else if (module instanceof CooldownModule) {
@@ -75,7 +75,7 @@ public class ServerCommandListener implements Listener {
 					final FloodModule floodModule = (FloodModule) module;
 
 					if (floodModule.isReplace()) {
-						final String replacedString = floodModule.replace(originalMessage);
+						final String replacedString = floodModule.replace(event.getMessage());
 
 						if (!replacedString.isEmpty())
 							event.setMessage(replacedString);

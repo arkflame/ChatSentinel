@@ -52,7 +52,7 @@ public class AsyncPlayerChatListener implements Listener {
 				if (blacklistModule.isFakeMessage()) {
 					recipients.removeIf(player1 -> player1 != player);
 				} else if (blacklistModule.isHideWords()) {
-					event.setMessage(blacklistModule.getPattern().matcher(message).replaceAll("***"));
+					event.setMessage(blacklistModule.getPattern().matcher(event.getMessage()).replaceAll("***"));
 				} else {
 					event.setCancelled(true);
 				}
@@ -60,7 +60,7 @@ public class AsyncPlayerChatListener implements Listener {
 				final CapsModule capsModule = (CapsModule) module;
 
 				if (capsModule.isReplace()) {
-					event.setMessage(originalMessage.toLowerCase());
+					event.setMessage(event.getMessage().toLowerCase());
 				} else {
 					event.setCancelled(true);
 				}
@@ -73,7 +73,7 @@ public class AsyncPlayerChatListener implements Listener {
 				final FloodModule floodModule = (FloodModule) module;
 
 				if (floodModule.isReplace()) {
-					final String replacedString = floodModule.replace(originalMessage);
+					final String replacedString = floodModule.replace(event.getMessage());
 
 					if (!replacedString.isEmpty()) {
 						event.setMessage(replacedString);

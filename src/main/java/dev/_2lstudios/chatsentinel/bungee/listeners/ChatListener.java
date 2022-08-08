@@ -61,16 +61,17 @@ public class ChatListener implements Listener {
 
 				if (blacklistModule.isHideWords()) {
 					event.setMessage(
-							blacklistModule.getPattern().matcher(message).replaceAll("***"));
+							blacklistModule.getPattern().matcher(event.getMessage()).replaceAll("***"));
 				} else
 					event.setCancelled(true);
 			} else if (module instanceof CapsModule) {
 				final CapsModule capsModule = (CapsModule) module;
 
-				if (capsModule.isReplace())
-					event.setMessage(originalMessage.toLowerCase());
-				else
+				if (capsModule.isReplace()) {
+					event.setMessage(event.getMessage().toLowerCase());
+				} else {
 					event.setCancelled(true);
+				}
 			} else if (module instanceof CooldownModule) {
 				placeholders[1][4] = String.valueOf(
 						((CooldownModule) module).getRemainingTime(chatPlayer, originalMessage));
@@ -80,7 +81,7 @@ public class ChatListener implements Listener {
 				final FloodModule floodModule = (FloodModule) module;
 
 				if (floodModule.isReplace()) {
-					final String replacedString = floodModule.replace(originalMessage);
+					final String replacedString = floodModule.replace(event.getMessage());
 
 					if (!replacedString.isEmpty()) {
 						event.setMessage(replacedString);
