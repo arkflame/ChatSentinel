@@ -74,7 +74,7 @@ public class ChatListener implements Listener {
 				}
 			} else if (module instanceof CooldownModule) {
 				placeholders[1][4] = String.valueOf(
-						((CooldownModule) module).getRemainingTime(chatPlayer, originalMessage));
+						((CooldownModule) module).getRemainingTime(chatPlayer, event.getMessage()));
 
 				event.setCancelled(true);
 			} else if (module instanceof FloodModule) {
@@ -145,7 +145,7 @@ public class ChatListener implements Listener {
 					final boolean isNormalCommand = generalModule.isCommand(originalMessage);
 					String message = originalMessage;
 
-					if (isCommand && isNormalCommand && originalMessage.contains(" ")) {
+					if (isCommand && isNormalCommand && message.contains(" ")) {
 						message = message.substring(message.indexOf(" "));
 					}
 
