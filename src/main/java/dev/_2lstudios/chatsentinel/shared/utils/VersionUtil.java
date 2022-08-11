@@ -4,6 +4,9 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 import org.bukkit.entity.Entity.Spigot;
+
+import com.velocitypowered.api.command.CommandSource;
+
 import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -69,6 +72,14 @@ public class VersionUtil {
 			if (localeString.length() > 1) {
 				return trimLocale(localeString);
 			}
+		}
+
+		return "en";
+	}
+
+	public static String getLocale(CommandSource source) {
+		if (source instanceof com.velocitypowered.api.proxy.Player) {
+			return getLocale((com.velocitypowered.api.proxy.Player)source);
 		}
 
 		return "en";

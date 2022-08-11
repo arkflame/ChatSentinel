@@ -3,7 +3,6 @@ package dev._2lstudios.chatsentinel.velocity;
 import java.nio.file.Path;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -30,16 +29,13 @@ import dev._2lstudios.chatsentinel.velocity.utils.ConfigUtils;
 public class ChatSentinel {
     private final ProxyServer proxy;
     private final EventManager eventManager;
-    private final CommandManager commandManager;
     private final Path path;
-    private ModuleManager moduleManager;
-    private ChatPlayerManager chatPlayerManager;
+    private final ChatPlayerManager chatPlayerManager;
 
     @Inject
-    public ChatSentinel(ProxyServer proxy, EventManager eventManager, CommandManager commandManager, @DataDirectory Path path) {
+    public ChatSentinel(ProxyServer proxy, EventManager eventManager, @DataDirectory Path path) {
         this.proxy = proxy;
         this.eventManager = eventManager;
-        this.commandManager = commandManager;
         chatPlayerManager = new ChatPlayerManager();
         this.path = path;
     }
@@ -49,10 +45,10 @@ public class ChatSentinel {
       final ConfigUtils configs = new ConfigUtils(path);
       configs.init();
 
-      this.moduleManager = new VelocityModuleManager(configs);
+      final ModuleManager moduleManager = new VelocityModuleManager(configs);
       moduleManager.reloadData();
 
-      ChatSentinelCommand.register(commandManager, this);
+      ChatSentinelCommand.register(proxy, this, moduleManager);
 
       eventManager.register(this, new ChatListener(moduleManager, chatPlayerManager, proxy));
       eventManager.register(this, new CommandListener(moduleManager, chatPlayerManager, proxy));
