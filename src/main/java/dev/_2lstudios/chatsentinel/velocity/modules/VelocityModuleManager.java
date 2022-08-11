@@ -24,17 +24,17 @@ public class VelocityModuleManager extends ModuleManager {
         final ConfigurationNode messagesYml = configs.createAndGet("messages.yml");
 		final Map<String, Map<String, String>> locales = new HashMap<>();
 
-        for (final ConfigurationNode lang : messagesYml.getNode("langs").getChildrenList()) {
+		messagesYml.getNode("langs").getChildrenMap().forEach((lang, node) -> {
 			final Map<String, String> messages = new HashMap<>();
 
-			for (final ConfigurationNode key : lang.getChildrenList()) {
-				final String value = lang.getNode(key).getString();
+			node.getChildrenMap().forEach((key, n) -> {
+				final String value = n.getString();
 
-				messages.put(key.getKey().toString(), value);
-			}
+				messages.put(key.toString(), value);
+			});
 
-			locales.put(lang.getKey().toString(), messages);
-		}
+			locales.put(lang.toString(), messages);
+		});
 
         final ConfigurationNode blacklistYml = configs.createAndGet("blacklist.yml");
 		final ConfigurationNode configYml = configs.createAndGet("config.yml");
