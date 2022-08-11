@@ -63,6 +63,14 @@ public class GeneralModule {
 		return message;
 	}
 
+	public String sanitizeNames(com.velocitypowered.api.proxy.ProxyServer server, String message) {
+		for (com.velocitypowered.api.proxy.Player player : server.getAllPlayers()) {
+			message = message.replace(player.getUsername(), "");
+		}
+
+		return message;
+	}
+
 	public boolean isCommand(String message) {
 		message = message.toLowerCase();
 
