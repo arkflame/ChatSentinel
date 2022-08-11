@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.interfaces.Module;
+import dev._2lstudios.chatsentinel.shared.utils.ArraysUtil;
 import dev._2lstudios.chatsentinel.shared.utils.PatternUtil;
 import dev._2lstudios.chatsentinel.shared.utils.PlaceholderUtil;
 
@@ -60,7 +61,7 @@ public class BlacklistModule implements Module {
 
 			return commands;
 		} else
-			return new String[0];
+			return ArraysUtil.EMPTY_ARRAY;
 	}
 
 	@Override

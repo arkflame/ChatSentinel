@@ -2,6 +2,7 @@ package dev._2lstudios.chatsentinel.shared.modules;
 
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.interfaces.Module;
+import dev._2lstudios.chatsentinel.shared.utils.ArraysUtil;
 
 public class CooldownModule implements Module {
 	private boolean enabled;
@@ -56,7 +57,7 @@ public class CooldownModule implements Module {
 
 	@Override
 	final public String[] getCommands(final String[][] placeholders) {
-		return new String[0];
+		return ArraysUtil.EMPTY_ARRAY;
 	}
 
 	@Override

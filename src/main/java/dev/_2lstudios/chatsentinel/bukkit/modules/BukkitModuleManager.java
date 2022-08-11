@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import dev._2lstudios.chatsentinel.bukkit.utils.ConfigUtil;
 import dev._2lstudios.chatsentinel.shared.modules.ModuleManager;
+import dev._2lstudios.chatsentinel.shared.utils.ArraysUtil;
 
 public class BukkitModuleManager extends ModuleManager {
 	private final ConfigUtil configUtil;
@@ -47,28 +48,28 @@ public class BukkitModuleManager extends ModuleManager {
 		getCapsModule().loadData(configYml.getBoolean("caps.enabled"), configYml.getBoolean("caps.replace"),
 				configYml.getInt("caps.max"), configYml.getInt("caps.warn.max"),
 				configYml.getString("caps.warn.notification"),
-				configYml.getStringList("caps.punishments").toArray(new String[0]));
+				configYml.getStringList("caps.punishments").toArray(ArraysUtil.EMPTY_ARRAY));
 		getCooldownModule().loadData(configYml.getBoolean("cooldown.enabled"),
 				configYml.getInt("cooldown.time.repeat-global"), configYml.getInt("cooldown.time.repeat"),
 				configYml.getInt("cooldown.time.normal"), configYml.getInt("cooldown.time.command"));
 		getFloodModule().loadData(configYml.getBoolean("flood.enabled"), configYml.getBoolean("flood.replace"),
 				configYml.getInt("flood.warn.max"), configYml.getString("flood.pattern"),
 				configYml.getString("flood.warn.notification"),
-				configYml.getStringList("flood.punishments").toArray(new String[0]));
+				configYml.getStringList("flood.punishments").toArray(ArraysUtil.EMPTY_ARRAY));
 		getMessagesModule().loadData(messagesYml.getString("default"), locales);
 		getGeneralModule().loadData(configYml.getBoolean("general.sanitize", true),
 				configYml.getBoolean("general.sanitize-names", true),
 				configYml.getStringList("general.commands"));
 		getWhitelistModule().loadData(configYml.getBoolean("whitelist.enabled"),
-				whitelistYml.getStringList("expressions").toArray(new String[0]));
+				whitelistYml.getStringList("expressions").toArray(ArraysUtil.EMPTY_ARRAY));
 		getBlacklistModule().loadData(configYml.getBoolean("blacklist.enabled"),
 				configYml.getBoolean("blacklist.fake_message"), configYml.getBoolean("blacklist.hide_words"),
 				configYml.getInt("blacklist.warn.max"), configYml.getString("blacklist.warn.notification"),
-				configYml.getStringList("blacklist.punishments").toArray(new String[0]),
-				blacklistYml.getStringList("expressions").toArray(new String[0]));
+				configYml.getStringList("blacklist.punishments").toArray(ArraysUtil.EMPTY_ARRAY),
+				blacklistYml.getStringList("expressions").toArray(ArraysUtil.EMPTY_ARRAY));
 		getSyntaxModule().loadData(configYml.getBoolean("syntax.enabled"), configYml.getInt("syntax.warn.max"),
 				configYml.getString("syntax.warn.notification"),
-				configYml.getStringList("syntax.whitelist").toArray(new String[0]),
-				configYml.getStringList("syntax.punisments").toArray(new String[0]));
+				configYml.getStringList("syntax.whitelist").toArray(ArraysUtil.EMPTY_ARRAY),
+				configYml.getStringList("syntax.punisments").toArray(ArraysUtil.EMPTY_ARRAY));
 	}
 }

@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 
 public class ConfigUtil {
@@ -32,27 +34,25 @@ public class ConfigUtil {
 
 			file = file.replace("%datafolder%", dataFolder.toPath().toString());
 
-			final File configFile = new File(file);
+			final Path configFile = Paths.get(file);
 
-			if (!configFile.exists()) {
+			if (Files.notExists(configFile)) {
 				final String[] files = file.split("/");
-				final InputStream inputStream = plugin.getClass().getClassLoader()
-						.getResourceAsStream(files[files.length - 1]);
-				final File parentFile = configFile.getParentFile();
+				final Path parentFile = configFile.getParent();
 
 				if (parentFile != null)
-					parentFile.mkdirs();
-
-				if (inputStream != null) {
-					Files.copy(inputStream, configFile.toPath());
-					plugin.getLogger().log(Level.INFO, ("[%pluginname%] File " + configFile + " has been created!")
-							.replace("%pluginname%", plugin.getDescription().getName()));
-				} else
-					configFile.createNewFile();
+					Files.createDirectory(parentFile);
+				try (InputStream inputStream = plugin.getClass().getClassLoader().getResourceAsStream(files[files.length - 1])) {
+					if (inputStream != null) {
+						Files.copy(inputStream, configFile);
+						plugin.getLogger().log(Level.INFO, "[{0}] File {1} has been created!", new Object[] {
+							plugin.getDescription().getName(), configFile
+						});
+					}
+				}
 			}
 		} catch (final IOException e) {
-			plugin.getLogger().log(Level.INFO, ("[%pluginname%] Unable to create configuration file!")
-					.replace("%pluginname%", plugin.getDescription().getName()));
+			plugin.getLogger().log(Level.INFO, "[{0}] Unable to create configuration file!", plugin.getDescription().getName());
 		}
 	}
 }
