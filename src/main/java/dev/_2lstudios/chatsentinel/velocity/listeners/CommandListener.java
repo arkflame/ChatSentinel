@@ -9,6 +9,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.command.CommandExecuteEvent;
 import com.velocitypowered.api.event.command.CommandExecuteEvent.CommandResult;
+import com.velocitypowered.api.network.ProtocolVersion;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 
@@ -46,11 +47,17 @@ public class CommandListener {
 
         final CommandSource source = event.getCommandSource();
 
-        if(!(source instanceof Player)) {
+        if (!(source instanceof Player) || source.hasPermission("chatsentinel.bypass")) {
             return;
         }
 
         final Player player = (Player)source;
+
+        // Minecraft 1.19.1+ clients with valid key
+        if(player.getIdentifiedKey() != null && player.getProtocolVersion().compareTo(ProtocolVersion.MINECRAFT_1_19_1) >= 0) {
+            return;
+        }
+
         final UUID uuid = player.getUniqueId();
         final GeneralModule generalModule = moduleManager.getGeneralModule();
         final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
