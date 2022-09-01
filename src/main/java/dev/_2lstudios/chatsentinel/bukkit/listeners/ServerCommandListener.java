@@ -114,7 +114,7 @@ public class ServerCommandListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onServerCommand(final PlayerCommandPreprocessEvent event) {
 		final Player player = event.getPlayer();
 

@@ -126,7 +126,7 @@ public class ChatListener implements Listener {
 		}
 	}
 
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler(priority = EventPriority.LOW)
 	public void onChatEvent(final ChatEvent event) {
 		if (!event.isCancelled()) {
 			final Connection sender = event.getSender();
