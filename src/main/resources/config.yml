@@ -11,7 +11,7 @@ general:
   # Internally remove all names from messages before checking. (Reduces false positives)
   sanitize-names: true
 
-  # Commands that will be threated as normal messages
+  # Commands that will be treated as normal messages
   commands:
     - /broadcast
     - /ebroadcast
