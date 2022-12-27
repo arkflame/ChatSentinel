@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ChatPlayerManager {
-    final private Map<UUID, ChatPlayer> chatPlayers = new HashMap<>();
+    private Map<UUID, ChatPlayer> chatPlayers = new HashMap<>();
 
-    public ChatPlayer getPlayer(final UUID uuid) {
+    public ChatPlayer getPlayer(UUID uuid) {
         ChatPlayer chatPlayer = chatPlayers.getOrDefault(uuid, null);
 
         if (chatPlayer == null) {

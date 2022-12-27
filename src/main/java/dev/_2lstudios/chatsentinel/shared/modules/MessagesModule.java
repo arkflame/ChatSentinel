@@ -9,40 +9,44 @@ public class MessagesModule {
 	private Map<String, Map<String, String>> locales;
 	private String defaultLang = "en";
 
-	public final void loadData(final String defaultLang, final Map<String, Map<String, String>> messages) {
+	public void loadData(String defaultLang, Map<String, Map<String, String>> messages) {
 		this.locales = messages;
 		this.defaultLang = defaultLang;
 	}
 
-	private final String getString(final String lang, final String path) {
-		final Map<String, String> messages = locales.getOrDefault(lang, locales.getOrDefault(defaultLang, locales.getOrDefault("en", new HashMap<>())));
+	private String getString(String lang, String path) {
+		Map<String, String> messages = locales.getOrDefault(lang, locales.getOrDefault(defaultLang, locales.getOrDefault("en", new HashMap<>())));
 
 		return messages.getOrDefault(path, "<CHATSENTINEL STRING NOT FOUND>");
 	}
 
-	public final String getCleared(final String[][] placeholders, final String lang) {
+	public String getCleared(String[][] placeholders, String lang) {
 		return PlaceholderUtil.replacePlaceholders(getString(lang, "cleared"), placeholders);
 	}
 
-	public final String getReload(final String lang) {
-		return PlaceholderUtil.replacePlaceholders(getString(lang, "reload"), null);
+	public String getReload(String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "reload"));
 	}
 
-	public final String getHelp(final String lang) {
-		return PlaceholderUtil.replacePlaceholders(getString(lang, "help"), null);
+	public String getHelp(String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "help"));
 	}
 
-	public final String getUnknownCommand(final String lang) {
-		return PlaceholderUtil.replacePlaceholders(getString(lang, "unknown_command"), null);
+	public String getUnknownCommand(String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "unknown_command"));
 	}
 
-	public final String getNoPermission(final String lang) {
-		return PlaceholderUtil.replacePlaceholders(getString(lang, "no_permission"), null);
+	public String getNoPermission(String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "no_permission"));
 	}
 
-	public final String getWarnMessage(final String[][] placeholders, final String lang, final String module) {
-		final String moduleLowerCase = module.toLowerCase();
+	public String getWarnMessage(String[][] placeholders, String lang, String module) {
+		String moduleLowerCase = module.toLowerCase();
 
 		return PlaceholderUtil.replacePlaceholders(getString(lang, moduleLowerCase + "_warn_message"), placeholders);
+	}
+
+	public String getFiltered(String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "filtered"));
 	}
 }

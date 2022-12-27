@@ -12,17 +12,17 @@ import net.md_5.bungee.api.plugin.PluginManager;
 public class ChatSentinel extends Plugin {
 	@Override
 	public void onEnable() {
-		final ConfigUtil configUtil = new ConfigUtil(this);
+		ConfigUtil configUtil = new ConfigUtil(this);
 
 		configUtil.create("%datafolder%/config.yml");
 		configUtil.create("%datafolder%/messages.yml");
 		configUtil.create("%datafolder%/whitelist.yml");
 		configUtil.create("%datafolder%/blacklist.yml");
 
-		final ProxyServer server = getProxy();
-		final BungeeModuleManager moduleManager = new BungeeModuleManager(configUtil);
-		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
-		final PluginManager pluginManager = server.getPluginManager();
+		ProxyServer server = getProxy();
+		BungeeModuleManager moduleManager = new BungeeModuleManager(configUtil);
+		ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
+		PluginManager pluginManager = server.getPluginManager();
 
 		pluginManager.registerListener(this, new ChatListener(this, moduleManager, chatPlayerManager));
 		pluginManager.registerCommand(this, new ChatSentinelCommand(moduleManager, server));

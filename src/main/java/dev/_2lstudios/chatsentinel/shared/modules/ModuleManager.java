@@ -1,14 +1,14 @@
 package dev._2lstudios.chatsentinel.shared.modules;
 
 public abstract class ModuleManager {
-	private final CapsModule capsModule;
-	private final CooldownModule cooldownModule;
-	private final FloodModule floodModule;
-	private final MessagesModule messagesModule;
-	private final GeneralModule generalModule;
-	private final BlacklistModule blacklistModule;
-	private final SyntaxModule syntaxModule;
-	private final WhitelistModule whitelistModule;
+	private CapsModule capsModule;
+	private CooldownModule cooldownModule;
+	private FloodModule floodModule;
+	private MessagesModule messagesModule;
+	private GeneralModule generalModule;
+	private BlacklistModule blacklistModule;
+	private SyntaxModule syntaxModule;
+	private WhitelistModule whitelistModule;
 
 	public ModuleManager() {
 		this.capsModule = new CapsModule();

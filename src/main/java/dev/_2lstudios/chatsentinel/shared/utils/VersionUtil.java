@@ -11,7 +11,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 public class VersionUtil {
 	private static boolean oneDotNine = false;
 
-	public static void start(final String version) {
+	public static void start(String version) {
 		oneDotNine = !version.contains("1.8") && !version.contains("1.7");
 	}
 
@@ -19,22 +19,22 @@ public class VersionUtil {
 		return oneDotNine;
 	}
 
-	private static String trimLocale(final String locale) {
+	private static String trimLocale(String locale) {
 		return locale.substring(0, 2);
 	}
 
-	public static String getLocale(final Player player) {
+	public static String getLocale(Player player) {
 		String locale;
 
 		try {
-			final Method method = player.getClass().getMethod("getLocale");
+			Method method = player.getClass().getMethod("getLocale");
 			locale = (String) method.invoke(player);
-		} catch (final Exception exception) {
+		} catch (Exception exception) {
 			try {
-				final Spigot playerSpigot = player.spigot();
-				final Method method = playerSpigot.getClass().getMethod("getLocale");
+				Spigot playerSpigot = player.spigot();
+				Method method = playerSpigot.getClass().getMethod("getLocale");
 				locale = (String) method.invoke(playerSpigot);
-			} catch (final Exception exception1) {
+			} catch (Exception exception1) {
 				locale = "en";
 			}
 		}
@@ -46,11 +46,11 @@ public class VersionUtil {
 		}
 	}
 
-	public static String getLocale(final ProxiedPlayer player) {
-		final Locale locale = player.getLocale();
+	public static String getLocale(ProxiedPlayer player) {
+		Locale locale = player.getLocale();
 
 		if (locale != null) {
-			final String localeString = locale.toString();
+			String localeString = locale.toString();
 
 			if (localeString.length() > 1) {
 				return trimLocale(localeString);

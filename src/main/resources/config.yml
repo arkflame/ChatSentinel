@@ -4,12 +4,14 @@ whitelist:
   enabled: true
 
 general:
-  # Internally remove all non-latin characters from messages. (Improves detection)
-  # If your server uses non-latin characters you might want to disable this.
+  # If enabled, other checks will ignore non-latin characters to improve detection.
   sanitize: true
 
-  # Internally remove all names from messages before checking. (Reduces false positives)
+  # If enabled, other checks will ignore player names to improve detection.
   sanitize-names: true
+
+  # Filter and remove non-latin characters from all messages.
+  filter-other: false
 
   # Commands that will be treated as normal messages
   commands:

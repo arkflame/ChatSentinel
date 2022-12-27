@@ -10,8 +10,8 @@ public class CapsModule implements Module {
 	private String warnNotification;
 	private String[] commands;
 
-	final public void loadData(final boolean enabled, final boolean replace, final int max, final int maxWarns,
-			final String warnNotification, final String[] commands) {
+	public void loadData(boolean enabled, boolean replace, int max, int maxWarns,
+			String warnNotification, String[] commands) {
 		this.enabled = enabled;
 		this.replace = replace;
 		this.max = max;
@@ -20,16 +20,16 @@ public class CapsModule implements Module {
 		this.commands = commands;
 	}
 
-	final public boolean isReplace() {
+	public boolean isReplace() {
 		return this.replace;
 	}
 
-	final public long capsCount(final String string) {
+	public long capsCount(String string) {
 		return string.codePoints().filter(c -> c >= 'A' && c <= 'Z').count();
 	}
 
 	@Override
-	final public boolean meetsCondition(final ChatPlayer chatPlayer, final String message) {
+	public boolean meetsCondition(ChatPlayer chatPlayer, String message) {
 		if (this.enabled && this.capsCount(message) > max)
 			return true;
 
@@ -37,14 +37,14 @@ public class CapsModule implements Module {
 	}
 
 	@Override
-	final public String getName() {
+	public String getName() {
 		return "Caps";
 	}
 
 	@Override
-	final public String[] getCommands(final String[][] placeholders) {
+	public String[] getCommands(String[][] placeholders) {
 		if (this.commands.length > 0) {
-			final String[] commands = this.commands.clone();
+			String[] commands = this.commands.clone();
 
 			for (int i = 0; i < commands.length; i++) {
 				commands[i] = PlaceholderUtil.replacePlaceholders(commands[i], placeholders);
@@ -56,7 +56,7 @@ public class CapsModule implements Module {
 	}
 
 	@Override
-	final public String getWarnNotification(final String[][] placeholders) {
+	public String getWarnNotification(String[][] placeholders) {
 		if (!this.warnNotification.isEmpty()) {
 			return PlaceholderUtil.replacePlaceholders(this.warnNotification, placeholders);
 		} else

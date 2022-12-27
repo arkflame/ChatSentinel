@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 public class PatternUtil {
-    public static Pattern compile(final String[] patterns) {
-        final StringBuilder patternBuilder = new StringBuilder();
+    public static Pattern compile(String[] patterns) {
+        StringBuilder patternBuilder = new StringBuilder();
 
-        for (final String entry : patterns) {
+        for (String entry : patterns) {
             if (patternBuilder.length() <= 0) {
                 patternBuilder.append("(" + entry);
             } else {
@@ -20,10 +20,10 @@ public class PatternUtil {
         return Pattern.compile("(?i)" + patternBuilder.toString());
     }
 
-    public static Pattern compile(final Collection<String> patterns) {
-        final StringBuilder patternBuilder = new StringBuilder();
+    public static Pattern compile(Collection<String> patterns) {
+        StringBuilder patternBuilder = new StringBuilder();
 
-        for (final String entry : patterns) {
+        for (String entry : patterns) {
             if (patternBuilder.length() <= 0) {
                 patternBuilder.append("(" + entry);
             } else {

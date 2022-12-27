@@ -14,12 +14,12 @@ import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 public class ChatSentinel extends JavaPlugin {
 	@Override
 	public void onEnable() {
-		final ConfigUtil configUtil = new ConfigUtil(this);
-		final Server server = getServer();
+		ConfigUtil configUtil = new ConfigUtil(this);
+		Server server = getServer();
 
-		final BukkitModuleManager moduleManager = new BukkitModuleManager(configUtil);
-		final ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
-		final PluginManager pluginManager = server.getPluginManager();
+		BukkitModuleManager moduleManager = new BukkitModuleManager(configUtil);
+		ChatPlayerManager chatPlayerManager = new ChatPlayerManager();
+		PluginManager pluginManager = server.getPluginManager();
 
 		pluginManager.registerEvents(new AsyncPlayerChatListener(this, moduleManager, chatPlayerManager), this);
 		pluginManager.registerEvents(new ServerCommandListener(this, moduleManager, chatPlayerManager), this);

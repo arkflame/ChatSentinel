@@ -13,8 +13,8 @@ public class FloodModule implements Module {
 	private String[] commands;
 	private Pattern pattern;
 
-	final public void loadData(final boolean enabled, final boolean replace, final int maxWarns, final String pattern,
-			final String warnNotification, final String[] commands) {
+	public void loadData(boolean enabled, boolean replace, int maxWarns, String pattern,
+			String warnNotification, String[] commands) {
 		this.enabled = enabled;
 		this.replace = replace;
 		this.maxWarns = maxWarns;
@@ -27,24 +27,24 @@ public class FloodModule implements Module {
 		return this.replace;
 	}
 
-	final public String replace(String string) {
+	public String replace(String string) {
 		return pattern.matcher(string).replaceAll("");
 	}
 
 	@Override
-	public boolean meetsCondition(final ChatPlayer chatPlayer, final String message) {
+	public boolean meetsCondition(ChatPlayer chatPlayer, String message) {
 		return this.enabled && pattern.matcher(message).find();
 	}
 
 	@Override
-	final public String getName() {
+	public String getName() {
 		return "Flood";
 	}
 
 	@Override
-	final public String[] getCommands(final String[][] placeholders) {
+	public String[] getCommands(String[][] placeholders) {
 		if (this.commands.length > 0) {
-			final String[] commands = this.commands.clone();
+			String[] commands = this.commands.clone();
 
 			for (int i = 0; i < commands.length; i++) {
 				commands[i] = PlaceholderUtil.replacePlaceholders(commands[i], placeholders);
@@ -56,7 +56,7 @@ public class FloodModule implements Module {
 	}
 
 	@Override
-	final public String getWarnNotification(final String[][] placeholders) {
+	public String getWarnNotification(String[][] placeholders) {
 		if (!this.warnNotification.isEmpty()) {
 			return PlaceholderUtil.replacePlaceholders(this.warnNotification, placeholders);
 		} else

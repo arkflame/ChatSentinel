@@ -10,15 +10,15 @@ import java.nio.file.Files;
 import java.util.logging.Level;
 
 public class ConfigUtil {
-	final private Plugin plugin;
+	private Plugin plugin;
 
-	public ConfigUtil(final Plugin plugin) {
+	public ConfigUtil(Plugin plugin) {
 		this.plugin = plugin;
 	}
 
 	public YamlConfiguration get(String filePath) {
-		final File dataFolder = plugin.getDataFolder();
-		final File file = new File(filePath.replace("%datafolder%", dataFolder.toPath().toString()));
+		File dataFolder = plugin.getDataFolder();
+		File file = new File(filePath.replace("%datafolder%", dataFolder.toPath().toString()));
 
 		if (file.exists())
 			return YamlConfiguration.loadConfiguration(file);
@@ -28,17 +28,17 @@ public class ConfigUtil {
 
 	public void create(String file) {
 		try {
-			final File dataFolder = plugin.getDataFolder();
+			File dataFolder = plugin.getDataFolder();
 
 			file = file.replace("%datafolder%", dataFolder.toPath().toString());
 
-			final File configFile = new File(file);
+			File configFile = new File(file);
 
 			if (!configFile.exists()) {
-				final String[] files = file.split("/");
-				final InputStream inputStream = plugin.getClass().getClassLoader()
+				String[] files = file.split("/");
+				InputStream inputStream = plugin.getClass().getClassLoader()
 						.getResourceAsStream(files[files.length - 1]);
-				final File parentFile = configFile.getParentFile();
+				File parentFile = configFile.getParentFile();
 
 				if (parentFile != null)
 					parentFile.mkdirs();
@@ -50,7 +50,7 @@ public class ConfigUtil {
 				} else
 					configFile.createNewFile();
 			}
-		} catch (final IOException e) {
+		} catch (IOException e) {
 			plugin.getLogger().log(Level.INFO, ("[%pluginname%] Unable to create configuration file!")
 					.replace("%pluginname%", plugin.getDescription().getName()));
 		}

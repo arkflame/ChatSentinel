@@ -10,23 +10,23 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class ChatSentinelCommand extends Command {
-	private final BungeeModuleManager moduleManager;
-	private final ProxyServer server;
+	private BungeeModuleManager moduleManager;
+	private ProxyServer server;
 
-	public ChatSentinelCommand(final BungeeModuleManager moduleManager, final ProxyServer server) {
+	public ChatSentinelCommand(BungeeModuleManager moduleManager, ProxyServer server) {
 		super("chatsentinel");
 		this.moduleManager = moduleManager;
 		this.server = server;
 	}
 
-	private void sendMessage(final CommandSender sender, final String message) {
+	private void sendMessage(CommandSender sender, String message) {
 		sender.sendMessage(TextComponent.fromLegacyText(message));
 	}
 
 	@Override
-	public void execute(final CommandSender sender, final String[] args) {
-		final MessagesModule messagesModule = moduleManager.getMessagesModule();
-		final String lang;
+	public void execute(CommandSender sender, String[] args) {
+		MessagesModule messagesModule = moduleManager.getMessagesModule();
+		String lang;
 
 		if (sender instanceof ProxiedPlayer) {
 			lang = VersionUtil.getLocale((ProxiedPlayer) sender);
@@ -42,9 +42,9 @@ public class ChatSentinelCommand extends Command {
 
 				sendMessage(sender, messagesModule.getReload(lang));
 			} else if (args[0].equalsIgnoreCase("clear")) {
-				final StringBuilder emptyLines = new StringBuilder();
-				final String newLine = "\n ";
-				final String[][] placeholders = { { "%player%" }, { sender.getName() } };
+				StringBuilder emptyLines = new StringBuilder();
+				String newLine = "\n ";
+				String[][] placeholders = { { "%player%" }, { sender.getName() } };
 
 				for (int i = 0; i < 128; i++) {
 					emptyLines.append(newLine);
@@ -52,7 +52,7 @@ public class ChatSentinelCommand extends Command {
 
 				emptyLines.append(messagesModule.getCleared(placeholders, lang));
 
-				for (final ProxiedPlayer player : server.getPlayers()) {
+				for (ProxiedPlayer player : server.getPlayers()) {
 					sendMessage(player, emptyLines.toString());
 				}
 			} else {

@@ -8,9 +8,9 @@ import dev._2lstudios.chatsentinel.shared.modules.ModuleManager;
 import net.md_5.bungee.config.Configuration;
 
 public class BungeeModuleManager extends ModuleManager {
-	private final ConfigUtil configUtil;
+	private ConfigUtil configUtil;
 
-	public BungeeModuleManager(final ConfigUtil configUtil) {
+	public BungeeModuleManager(ConfigUtil configUtil) {
 		this.configUtil = configUtil;
 		reloadData();
 	}
@@ -22,18 +22,18 @@ public class BungeeModuleManager extends ModuleManager {
 		configUtil.create("%datafolder%/blacklist.yml");
 		configUtil.create("%datafolder%/whitelist.yml");
 
-		final Configuration blacklistYml = configUtil.get("%datafolder%/blacklist.yml");
-		final Configuration configYml = configUtil.get("%datafolder%/config.yml");
-		final Configuration messagesYml = configUtil.get("%datafolder%/messages.yml");
-		final Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
-		final Map<String, Map<String, String>> locales = new HashMap<>();
+		Configuration blacklistYml = configUtil.get("%datafolder%/blacklist.yml");
+		Configuration configYml = configUtil.get("%datafolder%/config.yml");
+		Configuration messagesYml = configUtil.get("%datafolder%/messages.yml");
+		Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
+		Map<String, Map<String, String>> locales = new HashMap<>();
 
-		for (final String lang : messagesYml.getSection("langs").getKeys()) {
-			final Configuration langSection = messagesYml.getSection("langs." + lang);
-			final Map<String, String> messages = new HashMap<>();
+		for (String lang : messagesYml.getSection("langs").getKeys()) {
+			Configuration langSection = messagesYml.getSection("langs." + lang);
+			Map<String, String> messages = new HashMap<>();
 
-			for (final String key : langSection.getKeys()) {
-				final String value = langSection.getString(key);
+			for (String key : langSection.getKeys()) {
+				String value = langSection.getString(key);
 
 				messages.put(key, value);
 			}
@@ -55,6 +55,7 @@ public class BungeeModuleManager extends ModuleManager {
 		getMessagesModule().loadData(messagesYml.getString("default"), locales);
 		getGeneralModule().loadData(configYml.getBoolean("general.sanitize", true),
 				configYml.getBoolean("general.sanitize-names", true),
+				configYml.getBoolean("general.filter-other", false),
 				configYml.getStringList("general.commands"));
 		getWhitelistModule().loadData(configYml.getBoolean("whitelist.enabled"),
 				whitelistYml.getStringList("expressions").toArray(new String[0]));

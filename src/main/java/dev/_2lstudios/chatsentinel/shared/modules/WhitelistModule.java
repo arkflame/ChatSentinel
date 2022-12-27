@@ -8,7 +8,7 @@ public class WhitelistModule {
     private boolean enabled;
     private Pattern pattern;
 
-    public void loadData(final boolean enabled, final String[] patterns) {
+    public void loadData(boolean enabled, String[] patterns) {
         this.enabled = enabled;
         this.pattern = PatternUtil.compile(patterns);
     }

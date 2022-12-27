@@ -11,19 +11,19 @@ import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class ChatSentinelCommand implements CommandExecutor {
-	private final BukkitModuleManager moduleManager;
-	private final Server server;
+	private BukkitModuleManager moduleManager;
+	private Server server;
 
-	public ChatSentinelCommand(final BukkitModuleManager moduleManager, final Server server) {
+	public ChatSentinelCommand(BukkitModuleManager moduleManager, Server server) {
 		this.moduleManager = moduleManager;
 		this.server = server;
 	}
 
 	@Override
-	public boolean onCommand(final CommandSender sender, final Command command, final String label,
-			final String[] args) {
-		final MessagesModule messagesModule = moduleManager.getMessagesModule();
-		final String lang;
+	public boolean onCommand(CommandSender sender, Command command, String label,
+			String[] args) {
+		MessagesModule messagesModule = moduleManager.getMessagesModule();
+		String lang;
 
 		if (sender instanceof Player) {
 			lang = VersionUtil.getLocale((Player) sender);
@@ -39,9 +39,9 @@ public class ChatSentinelCommand implements CommandExecutor {
 
 				sender.sendMessage(messagesModule.getReload(lang));
 			} else if (args[0].equalsIgnoreCase("clear")) {
-				final StringBuilder emptyLines = new StringBuilder();
-				final String newLine = "\n ";
-				final String[][] placeholders = { { "%player%" }, { sender.getName() } };
+				StringBuilder emptyLines = new StringBuilder();
+				String newLine = "\n ";
+				String[][] placeholders = { { "%player%" }, { sender.getName() } };
 
 				for (int i = 0; i < 128; i++) {
 					emptyLines.append(newLine);
@@ -49,7 +49,7 @@ public class ChatSentinelCommand implements CommandExecutor {
 
 				emptyLines.append(messagesModule.getCleared(placeholders, lang));
 
-				for (final Player player : server.getOnlinePlayers()) {
+				for (Player player : server.getOnlinePlayers()) {
 					player.sendMessage(emptyLines.toString());
 				}
 			} else {

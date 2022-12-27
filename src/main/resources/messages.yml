@@ -19,6 +19,7 @@ langs:
     cooldown_warn_message: "&c&lCS: &cWait %cooldown%s before sending another message!"
     flood_warn_message: "&c&lCS: &cYou cant send too large messages!"
     syntax_warn_message: "&c&lCS: &cSyntax is disabled in this server!"
+    filtered: "&c&lCS: &cYour message was filtered by ChatSentinel! (Characters not allowed)"
   es:
     cleared: "&aEl chat fue limpiado por &b%player%&a!"
     reload: "&c&lCS: &aPlugin recargado correctamente!"
@@ -33,6 +34,7 @@ langs:
     cooldown_warn_message: "&c&lCS: &cEspera %cooldown%s antes de enviar otro mensaje!"
     flood_warn_message: "&c&lCS: &cNo puedes enviar mensajes tan largos!"
     syntax_warn_message: "&c&lCS: &cLa sintaxis esta deshabilitada en este servidor!"
+    filtered: "&c&lCS: &cTu mensaje fue filtrado por ChatSentinel! (Caracteres no permitidos)"
   pt-br:
     cleared: "&aO bate-papo foi limpo por &b%player%&a!"
     reload: "&c&lCS: &aPlugin recarregado com sucesso!"
@@ -47,3 +49,4 @@ langs:
     cooldown_warn_message: "&c&lCS: &cEspere %cooldown%s antes de enviar outra mensagem!"
     flood_warn_message: "&c&lCS: &cVocê não pode enviar mensagens muito grandes!"
     syntax_warn_message: "&c&lCS: &cA sintaxe está desativada neste servidor!"
+    filtered: "&c&lCS: &cSua mensagem foi filtrada pelo ChatSentinel! (Caracteres não permitidos)"

@@ -26,12 +26,12 @@ import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class AsyncPlayerChatListener implements Listener {
-	private final ChatSentinel chatSentinel;
-	private final BukkitModuleManager moduleManager;
-	private final ChatPlayerManager chatPlayerManager;
+	private ChatSentinel chatSentinel;
+	private BukkitModuleManager moduleManager;
+	private ChatPlayerManager chatPlayerManager;
 
-	public AsyncPlayerChatListener(final ChatSentinel chatSentinel, final BukkitModuleManager moduleManager,
-			final ChatPlayerManager chatPlayerManager) {
+	public AsyncPlayerChatListener(ChatSentinel chatSentinel, BukkitModuleManager moduleManager,
+			ChatPlayerManager chatPlayerManager) {
 		this.chatSentinel = chatSentinel;
 		this.moduleManager = moduleManager;
 		this.chatPlayerManager = chatPlayerManager;
@@ -40,14 +40,14 @@ public class AsyncPlayerChatListener implements Listener {
 	private void processModule(Server server, Player player, ChatPlayer chatPlayer, MessagesModule messagesModule, Module module, AsyncPlayerChatEvent event, String playerName, String message, String originalMessage, String lang) {
 		if (!player.hasPermission("chatsentinel.bypass." + module.getName())
 				&& module.meetsCondition(chatPlayer, message)) {
-			final Collection<Player> recipients = event.getRecipients();
-			final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
-			final String[][] placeholders = {
+			Collection<Player> recipients = event.getRecipients();
+			int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
+			String[][] placeholders = {
 					{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" }, { playerName, originalMessage,
 							String.valueOf(warns), String.valueOf(module.getMaxWarns()), String.valueOf(0) } };
 
 			if (module instanceof BlacklistModule) {
-				final BlacklistModule blacklistModule = (BlacklistModule) module;
+				BlacklistModule blacklistModule = (BlacklistModule) module;
 
 				if (blacklistModule.isFakeMessage()) {
 					recipients.removeIf(player1 -> player1 != player);
@@ -57,7 +57,7 @@ public class AsyncPlayerChatListener implements Listener {
 					event.setCancelled(true);
 				}
 			} else if (module instanceof CapsModule) {
-				final CapsModule capsModule = (CapsModule) module;
+				CapsModule capsModule = (CapsModule) module;
 
 				if (capsModule.isReplace()) {
 					event.setMessage(event.getMessage().toLowerCase());
@@ -70,10 +70,10 @@ public class AsyncPlayerChatListener implements Listener {
 
 				event.setCancelled(true);
 			} else if (module instanceof FloodModule) {
-				final FloodModule floodModule = (FloodModule) module;
+				FloodModule floodModule = (FloodModule) module;
 
 				if (floodModule.isReplace()) {
-					final String replacedString = floodModule.replace(event.getMessage());
+					String replacedString = floodModule.replace(event.getMessage());
 
 					if (!replacedString.isEmpty()) {
 						event.setMessage(replacedString);
@@ -87,14 +87,14 @@ public class AsyncPlayerChatListener implements Listener {
 				event.setCancelled(true);
 			}
 
-			final String notificationMessage = module.getWarnNotification(placeholders);
-			final String warnMessage = messagesModule.getWarnMessage(placeholders, lang, module.getName());
+			String notificationMessage = module.getWarnNotification(placeholders);
+			String warnMessage = messagesModule.getWarnMessage(placeholders, lang, module.getName());
 
 			if (warnMessage != null && !warnMessage.isEmpty())
 				player.sendMessage(warnMessage);
 
 			if (notificationMessage != null && !notificationMessage.isEmpty()) {
-				for (final Player player1 : server.getOnlinePlayers()) {
+				for (Player player1 : server.getOnlinePlayers()) {
 					if (player1.hasPermission("chatsentinel.notify"))
 						player1.sendMessage(notificationMessage);
 				}
@@ -104,7 +104,7 @@ public class AsyncPlayerChatListener implements Listener {
 
 			if (warns >= maxWarns && maxWarns > 0) {
 				server.getScheduler().runTask(chatSentinel, () -> {
-					for (final String command : module.getCommands(placeholders)) {
+					for (String command : module.getCommands(placeholders)) {
 						server.dispatchCommand(server.getConsoleSender(), command);
 					}
 				});
@@ -115,19 +115,19 @@ public class AsyncPlayerChatListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-	public void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
-		final Player player = event.getPlayer();
+	public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
+		Player player = event.getPlayer();
 
 		if (!player.hasPermission("chatsentinel.bypass")) {
-			final UUID uuid = player.getUniqueId();
-			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
-			final String originalMessage = event.getMessage();
-			final GeneralModule generalModule = moduleManager.getGeneralModule();
-			final MessagesModule messagesModule = moduleManager.getMessagesModule();
-			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
-			final Server server = chatSentinel.getServer();
-			final String playerName = player.getName();
-			final String lang = VersionUtil.getLocale(player);
+			UUID uuid = player.getUniqueId();
+			ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
+			GeneralModule generalModule = moduleManager.getGeneralModule();
+			String originalMessage = event.getMessage();
+			MessagesModule messagesModule = moduleManager.getMessagesModule();
+			WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
+			Server server = chatSentinel.getServer();
+			String playerName = player.getName();
+			String lang = VersionUtil.getLocale(player);
 			String message = originalMessage;
 
 			if (generalModule.isSanitizeEnabled()) {
@@ -139,7 +139,7 @@ public class AsyncPlayerChatListener implements Listener {
 			}
 
 			if (whitelistModule.isEnabled()) {
-				final Pattern whitelistPattern = whitelistModule.getPattern();
+				Pattern whitelistPattern = whitelistModule.getPattern();
 
 				message = whitelistPattern.matcher(message)
 						.replaceAll("");
@@ -154,11 +154,18 @@ public class AsyncPlayerChatListener implements Listener {
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getSyntaxModule(), event, playerName, message, originalMessage, lang);
 
 			if (!event.isCancelled()) {
-				final CooldownModule cooldownModule = moduleManager.getCooldownModule();
-				final long currentMillis = System.currentTimeMillis();
+				String newMessage = generalModule.isFilterOther() ? generalModule.sanitize(event.getMessage()) : event.getMessage();
+				
+				if (!newMessage.isEmpty()) {
+					long currentMillis = System.currentTimeMillis();
 
-				chatPlayer.addLastMessage(message, currentMillis);
-				cooldownModule.setLastMessage(message, currentMillis);
+					chatPlayer.addLastMessage(message, currentMillis);
+					moduleManager.getCooldownModule().setLastMessage(message, currentMillis);
+					event.setMessage(newMessage);
+				} else {
+					event.setCancelled(true);
+					player.sendMessage(messagesModule.getFiltered(lang));
+				}
 			}
 		}
 	}

@@ -26,12 +26,12 @@ import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
 import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class ServerCommandListener implements Listener {
-	private final Plugin plugin;
-	private final BukkitModuleManager moduleManager;
-	private final ChatPlayerManager chatPlayerManager;
+	private Plugin plugin;
+	private BukkitModuleManager moduleManager;
+	private ChatPlayerManager chatPlayerManager;
 
-	public ServerCommandListener(final Plugin plugin, final BukkitModuleManager moduleManager,
-			final ChatPlayerManager chatPlayerManager) {
+	public ServerCommandListener(Plugin plugin, BukkitModuleManager moduleManager,
+			ChatPlayerManager chatPlayerManager) {
 		this.plugin = plugin;
 		this.moduleManager = moduleManager;
 		this.chatPlayerManager = chatPlayerManager;
@@ -44,8 +44,8 @@ public class ServerCommandListener implements Listener {
 			if (!player.hasPermission("chatsentinel.bypass." + module.getName())
 					&& (module instanceof CooldownModule || module instanceof SyntaxModule || isNormalCommand)
 					&& module.meetsCondition(chatPlayer, message)) {
-				final int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
-				final String[][] placeholders = {
+				int warns = chatPlayer.addWarn(module), maxWarns = module.getMaxWarns();
+				String[][] placeholders = {
 						{ "%player%", "%message%", "%warns%", "%maxwarns%", "%cooldown%" },
 						{ playerName, originalMessage, String.valueOf(warns), String.valueOf(module.getMaxWarns()),
 								String.valueOf(0) } };
@@ -53,14 +53,14 @@ public class ServerCommandListener implements Listener {
 				if (module instanceof SyntaxModule) {
 					event.setCancelled(true);
 				} else if (module instanceof BlacklistModule) {
-					final BlacklistModule blacklistModule = (BlacklistModule) module;
+					BlacklistModule blacklistModule = (BlacklistModule) module;
 
 					if (blacklistModule.isHideWords()) {
 						event.setMessage(blacklistModule.getPattern().matcher(event.getMessage()).replaceAll("***"));
 					} else
 						event.setCancelled(true);
 				} else if (module instanceof CapsModule) {
-					final CapsModule capsModule = (CapsModule) module;
+					CapsModule capsModule = (CapsModule) module;
 
 					if (capsModule.isReplace())
 						event.setMessage(event.getMessage().toLowerCase());
@@ -72,10 +72,10 @@ public class ServerCommandListener implements Listener {
 
 					event.setCancelled(true);
 				} else if (module instanceof FloodModule) {
-					final FloodModule floodModule = (FloodModule) module;
+					FloodModule floodModule = (FloodModule) module;
 
 					if (floodModule.isReplace()) {
-						final String replacedString = floodModule.replace(event.getMessage());
+						String replacedString = floodModule.replace(event.getMessage());
 
 						if (!replacedString.isEmpty())
 							event.setMessage(replacedString);
@@ -86,14 +86,14 @@ public class ServerCommandListener implements Listener {
 				} else
 					event.setCancelled(true);
 
-				final String notificationMessage = module.getWarnNotification(placeholders);
-				final String warnMessage = messagesModule.getWarnMessage(placeholders, lang, module.getName());
+				String notificationMessage = module.getWarnNotification(placeholders);
+				String warnMessage = messagesModule.getWarnMessage(placeholders, lang, module.getName());
 
 				if (warnMessage != null && !warnMessage.isEmpty())
 					player.sendMessage(warnMessage);
 
 				if (notificationMessage != null && !notificationMessage.isEmpty()) {
-					for (final Player player1 : server.getOnlinePlayers()) {
+					for (Player player1 : server.getOnlinePlayers()) {
 						if (player1.hasPermission("chatsentinel.notify"))
 							player1.sendMessage(notificationMessage);
 					}
@@ -103,7 +103,7 @@ public class ServerCommandListener implements Listener {
 
 				if (warns >= maxWarns && maxWarns > 0) {
 					server.getScheduler().runTask(plugin, () -> {
-						for (final String command : module.getCommands(placeholders)) {
+						for (String command : module.getCommands(placeholders)) {
 							server.dispatchCommand(server.getConsoleSender(), command);
 						}
 					});
@@ -115,17 +115,17 @@ public class ServerCommandListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-	public void onServerCommand(final PlayerCommandPreprocessEvent event) {
-		final Player player = event.getPlayer();
+	public void onServerCommand(PlayerCommandPreprocessEvent event) {
+		Player player = event.getPlayer();
 
 		if (!player.hasPermission("chatsentinel.bypass")) {
-			final Server server = plugin.getServer();
-			final UUID uuid = player.getUniqueId();
-			final GeneralModule generalModule = moduleManager.getGeneralModule();
-			final WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
-			final ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
-			final String originalMessage = event.getMessage();
-			final boolean isNormalCommand = generalModule.isCommand(originalMessage);
+			Server server = plugin.getServer();
+			UUID uuid = player.getUniqueId();
+			GeneralModule generalModule = moduleManager.getGeneralModule();
+			WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
+			ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
+			String originalMessage = event.getMessage();
+			boolean isNormalCommand = generalModule.isCommand(originalMessage);
 			String message = originalMessage;
 
 			if (isNormalCommand && originalMessage.contains(" ")) {
@@ -141,7 +141,7 @@ public class ServerCommandListener implements Listener {
 			}
 
 			if (whitelistModule.isEnabled()) {
-				final Pattern whitelistPattern = whitelistModule.getPattern();
+				Pattern whitelistPattern = whitelistModule.getPattern();
 
 				message = whitelistPattern.matcher(message)
 						.replaceAll("");
@@ -149,9 +149,9 @@ public class ServerCommandListener implements Listener {
 
 			message = message.trim();
 
-			final MessagesModule messagesModule = moduleManager.getMessagesModule();
-			final String playerName = player.getName();
-			final String lang = VersionUtil.getLocale(player);
+			MessagesModule messagesModule = moduleManager.getMessagesModule();
+			String playerName = player.getName();
+			String lang = VersionUtil.getLocale(player);
 
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCapsModule(), event, playerName,
 					message, originalMessage, lang, isNormalCommand);

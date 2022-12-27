@@ -10,9 +10,9 @@ import dev._2lstudios.chatsentinel.bukkit.utils.ConfigUtil;
 import dev._2lstudios.chatsentinel.shared.modules.ModuleManager;
 
 public class BukkitModuleManager extends ModuleManager {
-	private final ConfigUtil configUtil;
+	private ConfigUtil configUtil;
 
-	public BukkitModuleManager(final ConfigUtil configUtil) {
+	public BukkitModuleManager(ConfigUtil configUtil) {
 		super();
 		this.configUtil = configUtil;
 		reloadData();
@@ -25,18 +25,18 @@ public class BukkitModuleManager extends ModuleManager {
 		configUtil.create("%datafolder%/whitelist.yml");
 		configUtil.create("%datafolder%/blacklist.yml");
 
-		final Configuration blacklistYml = configUtil.get("%datafolder%/blacklist.yml");
-		final Configuration configYml = configUtil.get("%datafolder%/config.yml");
-		final Configuration messagesYml = configUtil.get("%datafolder%/messages.yml");
-		final Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
-		final Map<String, Map<String, String>> locales = new HashMap<>();
+		Configuration blacklistYml = configUtil.get("%datafolder%/blacklist.yml");
+		Configuration configYml = configUtil.get("%datafolder%/config.yml");
+		Configuration messagesYml = configUtil.get("%datafolder%/messages.yml");
+		Configuration whitelistYml = configUtil.get("%datafolder%/whitelist.yml");
+		Map<String, Map<String, String>> locales = new HashMap<>();
 
-		for (final String lang : messagesYml.getConfigurationSection("langs").getKeys(false)) {
-			final ConfigurationSection langSection = messagesYml.getConfigurationSection("langs." + lang);
-			final Map<String, String> messages = new HashMap<>();
+		for (String lang : messagesYml.getConfigurationSection("langs").getKeys(false)) {
+			ConfigurationSection langSection = messagesYml.getConfigurationSection("langs." + lang);
+			Map<String, String> messages = new HashMap<>();
 
-			for (final String key : langSection.getKeys(false)) {
-				final String value = langSection.getString(key);
+			for (String key : langSection.getKeys(false)) {
+				String value = langSection.getString(key);
 
 				messages.put(key, value);
 			}
@@ -58,6 +58,7 @@ public class BukkitModuleManager extends ModuleManager {
 		getMessagesModule().loadData(messagesYml.getString("default"), locales);
 		getGeneralModule().loadData(configYml.getBoolean("general.sanitize", true),
 				configYml.getBoolean("general.sanitize-names", true),
+				configYml.getBoolean("general.filter-other", false),
 				configYml.getStringList("general.commands"));
 		getWhitelistModule().loadData(configYml.getBoolean("whitelist.enabled"),
 				whitelistYml.getStringList("expressions").toArray(new String[0]));

@@ -14,8 +14,8 @@ public class BlacklistModule implements Module {
 	private String[] commands;
 	private Pattern pattern;
 
-	public void loadData(final boolean enabled, final boolean fakeMessage, final boolean hideWords, final int maxWarns,
-			final String warnNotification, final String[] commands, final String[] patterns) {
+	public void loadData(boolean enabled, boolean fakeMessage, boolean hideWords, int maxWarns,
+			String warnNotification, String[] commands, String[] patterns) {
 		this.enabled = enabled;
 		this.fakeMessage = fakeMessage;
 		this.hideWords = hideWords;
@@ -38,7 +38,7 @@ public class BlacklistModule implements Module {
 	}
 
 	@Override
-	public boolean meetsCondition(final ChatPlayer chatPlayer, String message) {
+	public boolean meetsCondition(ChatPlayer chatPlayer, String message) {
 		message = message.startsWith("/") && message.contains(" ") ? message.substring(message.indexOf(" ")) : message;
 
 		return enabled && pattern.matcher(message).find();
@@ -50,9 +50,9 @@ public class BlacklistModule implements Module {
 	}
 
 	@Override
-	final public String[] getCommands(final String[][] placeholders) {
+	public String[] getCommands(String[][] placeholders) {
 		if (this.commands.length > 0) {
-			final String[] commands = this.commands.clone();
+			String[] commands = this.commands.clone();
 
 			for (int i = 0; i < commands.length; i++) {
 				commands[i] = PlaceholderUtil.replacePlaceholders(commands[i], placeholders);
@@ -64,7 +64,7 @@ public class BlacklistModule implements Module {
 	}
 
 	@Override
-	final public String getWarnNotification(final String[][] placeholders) {
+	public String getWarnNotification(String[][] placeholders) {
 		if (!this.warnNotification.isEmpty()) {
 			return PlaceholderUtil.replacePlaceholders(this.warnNotification, placeholders);
 		} else

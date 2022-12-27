@@ -9,9 +9,9 @@ public class CooldownModule implements Module {
 	private long lastMessageTime = 0L;
 	private String lastMessage = "";
 
-	final public void loadData(final boolean enabled, final int repeatTimeGlobal, final int repeatTime,
-			final int normalTime,
-			final int commandTime) {
+	public void loadData(boolean enabled, int repeatTimeGlobal, int repeatTime,
+			int normalTime,
+			int commandTime) {
 		this.enabled = enabled;
 		this.repeatTimeGlobal = repeatTimeGlobal;
 		this.repeatTime = repeatTime;
@@ -19,12 +19,12 @@ public class CooldownModule implements Module {
 		this.commandTime = commandTime;
 	}
 
-	final public float getRemainingTime(final ChatPlayer chatPlayer, final String message) {
+	public float getRemainingTime(ChatPlayer chatPlayer, String message) {
 		if (this.enabled && message != null) {
-			final long currentTime = System.currentTimeMillis();
-			final long lastMessageTime = currentTime - chatPlayer.getLastMessageTime();
-			final long lastMessageTimeGlobal = currentTime - this.lastMessageTime;
-			final long remainingTime;
+			long currentTime = System.currentTimeMillis();
+			long lastMessageTime = currentTime - chatPlayer.getLastMessageTime();
+			long lastMessageTimeGlobal = currentTime - this.lastMessageTime;
+			long remainingTime;
 
 			if (message.startsWith("/")) {
 				remainingTime = this.commandTime - lastMessageTime;
@@ -45,22 +45,22 @@ public class CooldownModule implements Module {
 	}
 
 	@Override
-	public boolean meetsCondition(final ChatPlayer chatPlayer, final String message) {
+	public boolean meetsCondition(ChatPlayer chatPlayer, String message) {
 		return getRemainingTime(chatPlayer, message) > 0;
 	}
 
 	@Override
-	final public String getName() {
+	public String getName() {
 		return "Cooldown";
 	}
 
 	@Override
-	final public String[] getCommands(final String[][] placeholders) {
+	public String[] getCommands(String[][] placeholders) {
 		return new String[0];
 	}
 
 	@Override
-	final public String getWarnNotification(final String[][] placeholders) {
+	public String getWarnNotification(String[][] placeholders) {
 		return null;
 	}
 

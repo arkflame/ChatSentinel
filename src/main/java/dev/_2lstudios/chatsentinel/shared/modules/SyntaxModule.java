@@ -10,8 +10,8 @@ public class SyntaxModule implements Module {
 	private String warnNotification;
 	private String[] whitelist, commands;
 
-	final public void loadData(final boolean enabled, final int maxWarns, final String warnNotification,
-			final String[] whitelist, final String[] commands) {
+	public void loadData(boolean enabled, int maxWarns, String warnNotification,
+			String[] whitelist, String[] commands) {
 		this.enabled = enabled;
 		this.maxWarns = maxWarns;
 		this.warnNotification = warnNotification;
@@ -19,9 +19,9 @@ public class SyntaxModule implements Module {
 		this.commands = commands;
 	}
 
-	final public boolean isWhitelisted(final String message) {
+	public boolean isWhitelisted(String message) {
 		if (whitelist.length > 0)
-			for (final String string : whitelist)
+			for (String string : whitelist)
 				if (message.startsWith(string))
 					return true;
 
@@ -29,19 +29,19 @@ public class SyntaxModule implements Module {
 	}
 
 	@Override
-	public boolean meetsCondition(final ChatPlayer chatPlayer, final String message) {
+	public boolean meetsCondition(ChatPlayer chatPlayer, String message) {
 		return (enabled && !isWhitelisted(message) && hasSyntax(message));
 	}
 
 	@Override
-	final public String getName() {
+	public String getName() {
 		return "Syntax";
 	}
 
 	@Override
-	final public String[] getCommands(final String[][] placeholders) {
+	public String[] getCommands(String[][] placeholders) {
 		if (this.commands.length > 0) {
-			final String[] commands = this.commands.clone();
+			String[] commands = this.commands.clone();
 
 			for (int i = 0; i < commands.length; i++) {
 				commands[i] = PlaceholderUtil.replacePlaceholders(commands[i], placeholders);
@@ -53,7 +53,7 @@ public class SyntaxModule implements Module {
 	}
 
 	@Override
-	final public String getWarnNotification(final String[][] placeholders) {
+	public String getWarnNotification(String[][] placeholders) {
 		if (!this.warnNotification.isEmpty()) {
 			return PlaceholderUtil.replacePlaceholders(this.warnNotification, placeholders);
 		} else
@@ -65,9 +65,9 @@ public class SyntaxModule implements Module {
 		return maxWarns;
 	}
 
-	private boolean hasSyntax(final String message) {
+	private boolean hasSyntax(String message) {
 		if (message.startsWith("/")) {
-			final String command;
+			String command;
 
 			if (message.contains(" ")) {
 				command = message.split(" ")[0];
@@ -75,7 +75,7 @@ public class SyntaxModule implements Module {
 				command = message;
 			}
 
-			final String[] syntax = command.split(":");
+			String[] syntax = command.split(":");
 
 			if (syntax.length > 1)
 				return true;
