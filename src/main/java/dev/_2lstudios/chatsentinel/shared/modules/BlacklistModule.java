@@ -8,14 +8,14 @@ import dev._2lstudios.chatsentinel.shared.utils.PatternUtil;
 import dev._2lstudios.chatsentinel.shared.utils.PlaceholderUtil;
 
 public class BlacklistModule implements Module {
-	private boolean enabled, fakeMessage, hideWords;
+	private boolean enabled, fakeMessage, hideWords, blockRawMessage;
 	private int maxWarns;
 	private String warnNotification;
 	private String[] commands;
 	private Pattern pattern;
 
 	public void loadData(boolean enabled, boolean fakeMessage, boolean hideWords, int maxWarns,
-			String warnNotification, String[] commands, String[] patterns) {
+			String warnNotification, String[] commands, String[] patterns, boolean blockRawMessage) {
 		this.enabled = enabled;
 		this.fakeMessage = fakeMessage;
 		this.hideWords = hideWords;
@@ -23,6 +23,7 @@ public class BlacklistModule implements Module {
 		this.warnNotification = warnNotification;
 		this.commands = commands;
 		this.pattern = PatternUtil.compile(patterns);
+		this.blockRawMessage = blockRawMessage;
 	}
 
 	public boolean isFakeMessage() {
@@ -31,6 +32,10 @@ public class BlacklistModule implements Module {
 
 	public boolean isHideWords() {
 		return this.hideWords;
+	}
+
+	public boolean isBlockRawMessage() {
+		return this.blockRawMessage;
 	}
 
 	public Pattern getPattern() {
