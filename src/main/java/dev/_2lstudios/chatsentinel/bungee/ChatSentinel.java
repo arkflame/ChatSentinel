@@ -2,6 +2,7 @@ package dev._2lstudios.chatsentinel.bungee;
 
 import dev._2lstudios.chatsentinel.bungee.commands.ChatSentinelCommand;
 import dev._2lstudios.chatsentinel.bungee.listeners.ChatListener;
+import dev._2lstudios.chatsentinel.bungee.listeners.ServerConnectListener;
 import dev._2lstudios.chatsentinel.bungee.modules.BungeeModuleManager;
 import dev._2lstudios.chatsentinel.bungee.utils.ConfigUtil;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
@@ -25,6 +26,8 @@ public class ChatSentinel extends Plugin {
 		PluginManager pluginManager = server.getPluginManager();
 
 		pluginManager.registerListener(this, new ChatListener(this, moduleManager, chatPlayerManager));
-		pluginManager.registerCommand(this, new ChatSentinelCommand(moduleManager, server));
+		pluginManager.registerListener(this, new ServerConnectListener(chatPlayerManager));
+
+		pluginManager.registerCommand(this, new ChatSentinelCommand(chatPlayerManager, moduleManager, server));
 	}
 }

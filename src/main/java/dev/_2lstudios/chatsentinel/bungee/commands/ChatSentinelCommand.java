@@ -1,8 +1,8 @@
 package dev._2lstudios.chatsentinel.bungee.commands;
 
 import dev._2lstudios.chatsentinel.bungee.modules.BungeeModuleManager;
+import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
-import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -10,11 +10,13 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class ChatSentinelCommand extends Command {
+	private ChatPlayerManager chatPlayerManager;
 	private BungeeModuleManager moduleManager;
 	private ProxyServer server;
 
-	public ChatSentinelCommand(BungeeModuleManager moduleManager, ProxyServer server) {
+	public ChatSentinelCommand(ChatPlayerManager chatPlayerManager, BungeeModuleManager moduleManager, ProxyServer server) {
 		super("chatsentinel");
+		this.chatPlayerManager = chatPlayerManager;
 		this.moduleManager = moduleManager;
 		this.server = server;
 	}
@@ -29,7 +31,7 @@ public class ChatSentinelCommand extends Command {
 		String lang;
 
 		if (sender instanceof ProxiedPlayer) {
-			lang = VersionUtil.getLocale((ProxiedPlayer) sender);
+			lang = chatPlayerManager.getPlayerOrCreate(((ProxiedPlayer) sender)).getLocale();
 		} else {
 			lang = "en";
 		}

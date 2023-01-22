@@ -1,6 +1,5 @@
 package dev._2lstudios.chatsentinel.bungee.listeners;
 
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import dev._2lstudios.chatsentinel.bungee.modules.BungeeModuleManager;
@@ -15,7 +14,6 @@ import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -136,10 +134,9 @@ public class ChatListener implements Listener {
 
 				if (!player.hasPermission("chatsentinel.bypass")) {
 					ProxyServer server = plugin.getProxy();
-					UUID uuid = player.getUniqueId();
 					GeneralModule generalModule = moduleManager.getGeneralModule();
 					WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
-					ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
+					ChatPlayer chatPlayer = chatPlayerManager.getPlayerOrCreate(player);
 					String originalMessage = event.getMessage();
 					boolean isCommand = event.isCommand();
 					boolean isNormalCommand = generalModule.isCommand(originalMessage);
@@ -167,7 +164,8 @@ public class ChatListener implements Listener {
 					message = message.trim();
 
 					MessagesModule messagesModule = moduleManager.getMessagesModule();
-					String playerName = player.getName(), lang = VersionUtil.getLocale(player);
+					String playerName = player.getName();
+					String lang = chatPlayer.getLocale();
 
 					processModule(server, player, chatPlayer, messagesModule, moduleManager.getCapsModule(), event,
 							playerName,

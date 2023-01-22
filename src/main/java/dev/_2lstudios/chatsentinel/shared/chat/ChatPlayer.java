@@ -13,6 +13,7 @@ public class ChatPlayer {
     private UUID uuid;
     private Map<Module, Integer> warns;
     private Deque<String> lastMessages;
+    private String locale = null;
     private long lastMessageTime;
 
     public ChatPlayer(UUID uuid) {
@@ -89,5 +90,17 @@ public class ChatPlayer {
 
     public UUID getUniqueId() {
         return uuid;
+    }
+
+    public String getLocale() {
+        return hasLocale() ? locale : "en";
+    }
+
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+
+    public boolean hasLocale() {
+        return this.locale != null;
     }
 }

@@ -1,9 +1,8 @@
 package dev._2lstudios.chatsentinel.shared.utils;
 
-import java.lang.reflect.Method;
+import java.lang.invoke.MethodHandle;
 import java.util.Locale;
 
-import org.bukkit.entity.Entity.Spigot;
 import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -24,26 +23,31 @@ public class VersionUtil {
 	}
 
 	public static String getLocale(Player player) {
-		String locale;
+		String locale = null;
 
-		try {
-			Method method = player.getClass().getMethod("getLocale");
-			locale = (String) method.invoke(player);
-		} catch (Exception exception) {
+		if (player != null && player.isOnline()) {
+			MethodHandle getLocaleMethod = ReflectionUtil.getLocalePlayerMethod();
+
 			try {
-				Spigot playerSpigot = player.spigot();
-				Method method = playerSpigot.getClass().getMethod("getLocale");
-				locale = (String) method.invoke(playerSpigot);
-			} catch (Exception exception1) {
-				locale = "en";
+				if (getLocaleMethod != null) {
+					locale = getLocaleMethod.invoke(player).toString();
+				} else {
+					getLocaleMethod = ReflectionUtil.getLocaleSpigotMethod();
+					if (getLocaleMethod != null) {
+						locale = getLocaleMethod.invoke(player.spigot()).toString();
+					}
+				}
+			} catch (Throwable t) {
+				// The player is invalid, ignore
+			}
+			
+
+			if (locale != null && locale.length() > 1) {
+				locale = locale.substring(0, 2);
 			}
 		}
 
-		if (locale != null && locale.length() > 1) {
-			return trimLocale(locale);
-		} else {
-			return "en";
-		}
+		return locale;
 	}
 
 	public static String getLocale(ProxiedPlayer player) {
