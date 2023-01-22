@@ -1,5 +1,7 @@
 package dev._2lstudios.chatsentinel.shared.chat;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -7,15 +9,16 @@ import java.util.UUID;
 import dev._2lstudios.chatsentinel.shared.interfaces.Module;
 
 public class ChatPlayer {
+    private int historySize = 3;
     private UUID uuid;
     private Map<Module, Integer> warns;
-    private String[] lastMessages;
+    private Deque<String> lastMessages;
     private long lastMessageTime;
 
     public ChatPlayer(UUID uuid) {
         this.uuid = uuid;
         this.warns = new HashMap<>();
-        this.lastMessages = new String[3];
+        this.lastMessages = new ArrayDeque<>(historySize);
         this.lastMessageTime = 0;
     }
 
@@ -31,10 +34,34 @@ public class ChatPlayer {
         return warns;
     }
 
-    public boolean isLastMessage(String message) {
-        if (message != null) {
-            for (String lastMessage : lastMessages) {
+    public String removeDigits(String str)
+    {
+        // Converting the given string
+        // into a character array
+        char[] charArray = str.toCharArray();
+        String result = "";
+ 
+        // Traverse the character array
+        for (int i = 0; i < charArray.length; i++) {
+            // Check if the specified character is not digit
+            // then add this character into result variable
+            if (!Character.isDigit(charArray[i])) {
+                result = result + charArray[i];
+            }
+        }
+ 
+        return result;
+    }
 
+    public boolean isLastMessage(String message) {
+        // Check if message is null
+        if (message != null) {
+            // Remove digits from message
+            message = removeDigits(message);
+
+            // Iterate over last messages
+            for (String lastMessage : lastMessages) {
+                // Check if equals
                 if (message.equals(lastMessage)) {
                     return true;
                 }
@@ -49,9 +76,10 @@ public class ChatPlayer {
     }
 
     public void addLastMessage(String lastMessage, long lastMessageTime) {
-        this.lastMessages[2] = this.lastMessages[1];
-        this.lastMessages[1] = this.lastMessages[0];
-        this.lastMessages[0] = lastMessage;
+        if (lastMessages.size() > historySize) {
+            lastMessages.removeLast();
+        }
+        lastMessages.offerFirst(removeDigits(lastMessage));
         this.lastMessageTime = lastMessageTime;
     }
 
