@@ -151,7 +151,7 @@ public class ChatListener implements Listener {
 					}
 
 					if (generalModule.isSanitizeNames()) {
-						message = generalModule.sanitizeNames(server, message);
+						message = generalModule.sanitizeNames(message);
 					}
 
 					if (whitelistModule.isEnabled()) {

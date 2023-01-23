@@ -2,18 +2,17 @@ package dev._2lstudios.chatsentinel.shared.modules;
 
 import java.text.Normalizer;
 import java.util.Collection;
-
-import org.bukkit.Server;
-import org.bukkit.entity.Player;
-
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import java.util.HashSet;
+import java.util.regex.Pattern;
 
 public class GeneralModule {
+	private Pattern nonAlphaNumericPattern = Pattern.compile("[^a-zA-Z0-9]");
+	private Pattern nicknamesPattern = Pattern.compile("");
+	private Collection<String> nicknames = new HashSet<>();
+	private Collection<String> commands;
 	private boolean sanitize;
 	private boolean sanitizeNames;
 	private boolean filterOther;
-	private Collection<String> commands;
 
 	public void loadData(boolean sanitize, boolean sanitizeNames, boolean filterOther,
 			Collection<String> commands) {
@@ -51,20 +50,49 @@ public class GeneralModule {
 		return sanitizeNames;
 	}
 
-	public String sanitizeNames(ProxyServer server, String message) {
-		for (ProxiedPlayer player : server.getPlayers()) {
-			message = message.replace(player.getName(), "");
-		}
-
-		return message;
+	public String removeNonAlphanumeric(String text) {
+		return nonAlphaNumericPattern.matcher(text).replaceAll("");
 	}
 
-	public String sanitizeNames(Server server, String message) {
-		for (Player player : server.getOnlinePlayers()) {
-			message = message.replace(player.getName(), "");
+	public void compileNicknamesPattern() {
+		StringBuilder stringBuilder = new StringBuilder();
+		boolean first = true;
+
+		for (String nickname : nicknames) {
+			if (!first) {
+				stringBuilder.append("|");
+			} else {
+				first = false;
+			}
+
+			stringBuilder.append("(?i)(" + nickname + ")");
 		}
 
-		return message;
+		nicknamesPattern = Pattern.compile(stringBuilder.toString());
+	}
+
+	public Pattern getNicknamesPattern() {
+		return nicknamesPattern;
+	}
+
+	public void addNickname(String nickname) {
+		// Remove alphanumeric to avoid errors
+		nicknames.add(removeNonAlphanumeric(nickname));
+
+		// Compile the pattern with the nicknames
+		compileNicknamesPattern();
+	}
+
+	public void removeNickname(String nickname) {
+		// Remove alphanumeric to avoid errors
+		nicknames.remove(removeNonAlphanumeric(nickname));
+		
+		// Compile the pattern with the nicknames
+		compileNicknamesPattern();
+	}
+
+	public String sanitizeNames(String message) {
+		return nicknamesPattern.matcher(message).replaceAll("");
 	}
 
 	public boolean isCommand(String message) {
