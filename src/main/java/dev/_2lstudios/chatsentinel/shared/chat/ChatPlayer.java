@@ -35,13 +35,12 @@ public class ChatPlayer {
         return warns;
     }
 
-    public String removeDigits(String str)
-    {
+    public String removeDigits(String str) {
         // Converting the given string
         // into a character array
         char[] charArray = str.toCharArray();
         String result = "";
- 
+
         // Traverse the character array
         for (int i = 0; i < charArray.length; i++) {
             // Check if the specified character is not digit
@@ -50,7 +49,7 @@ public class ChatPlayer {
                 result = result + charArray[i];
             }
         }
- 
+
         return result;
     }
 
@@ -60,10 +59,17 @@ public class ChatPlayer {
             // Remove digits from message
             message = removeDigits(message);
 
+            // Get the length of the message
+            int length = message.length();
+
             // Iterate over last messages
             for (String lastMessage : lastMessages) {
-                // Check if equals
+                // Check if equals the last message
                 if (message.equals(lastMessage)) {
+                    return true;
+                }
+                // Check if equals last message length
+                if (length > 16 && length == lastMessage.length()) {
                     return true;
                 }
             }
