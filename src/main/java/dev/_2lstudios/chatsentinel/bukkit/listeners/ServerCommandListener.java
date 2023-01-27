@@ -1,6 +1,5 @@
 package dev._2lstudios.chatsentinel.bukkit.listeners;
 
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Server;
@@ -23,7 +22,6 @@ import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.SyntaxModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class ServerCommandListener implements Listener {
 	private Plugin plugin;
@@ -120,10 +118,9 @@ public class ServerCommandListener implements Listener {
 
 		if (!player.hasPermission("chatsentinel.bypass")) {
 			Server server = plugin.getServer();
-			UUID uuid = player.getUniqueId();
 			GeneralModule generalModule = moduleManager.getGeneralModule();
 			WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
-			ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
+			ChatPlayer chatPlayer = chatPlayerManager.getPlayerOrCreate(player);
 			String originalMessage = event.getMessage();
 			boolean isNormalCommand = generalModule.isCommand(originalMessage);
 			String message = originalMessage;
@@ -137,7 +134,7 @@ public class ServerCommandListener implements Listener {
 			}
 
 			if (generalModule.isSanitizeNames()) {
-				message = generalModule.sanitizeNames(server, message);
+				message = generalModule.sanitizeNames(message);
 			}
 
 			if (whitelistModule.isEnabled()) {
@@ -151,7 +148,7 @@ public class ServerCommandListener implements Listener {
 
 			MessagesModule messagesModule = moduleManager.getMessagesModule();
 			String playerName = player.getName();
-			String lang = VersionUtil.getLocale(player);
+			String lang = chatPlayer.getLocale();
 
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCapsModule(), event, playerName,
 					message, originalMessage, lang, isNormalCommand);

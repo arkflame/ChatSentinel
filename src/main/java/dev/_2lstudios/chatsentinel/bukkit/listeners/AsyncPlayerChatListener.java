@@ -1,7 +1,6 @@
 package dev._2lstudios.chatsentinel.bukkit.listeners;
 
 import java.util.Collection;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Server;
@@ -23,7 +22,6 @@ import dev._2lstudios.chatsentinel.shared.modules.FloodModule;
 import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import dev._2lstudios.chatsentinel.shared.modules.WhitelistModule;
-import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class AsyncPlayerChatListener implements Listener {
 	private ChatSentinel chatSentinel;
@@ -122,15 +120,14 @@ public class AsyncPlayerChatListener implements Listener {
 		Player player = event.getPlayer();
 
 		if (!player.hasPermission("chatsentinel.bypass")) {
-			UUID uuid = player.getUniqueId();
-			ChatPlayer chatPlayer = chatPlayerManager.getPlayer(uuid);
+			ChatPlayer chatPlayer = chatPlayerManager.getPlayerOrCreate(player);
 			GeneralModule generalModule = moduleManager.getGeneralModule();
 			String originalMessage = event.getMessage();
 			MessagesModule messagesModule = moduleManager.getMessagesModule();
 			WhitelistModule whitelistModule = moduleManager.getWhitelistModule();
 			Server server = chatSentinel.getServer();
 			String playerName = player.getName();
-			String lang = VersionUtil.getLocale(player);
+			String lang = chatPlayer.getLocale();
 			String message = originalMessage;
 
 			if (generalModule.isSanitizeEnabled()) {
@@ -138,7 +135,7 @@ public class AsyncPlayerChatListener implements Listener {
 			}
 
 			if (generalModule.isSanitizeNames()) {
-				message = generalModule.sanitizeNames(server, message);
+				message = generalModule.sanitizeNames(message);
 			}
 
 			if (whitelistModule.isEnabled()) {

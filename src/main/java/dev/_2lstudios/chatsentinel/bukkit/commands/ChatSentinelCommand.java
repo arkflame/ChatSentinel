@@ -7,14 +7,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import dev._2lstudios.chatsentinel.bukkit.modules.BukkitModuleManager;
+import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
-import dev._2lstudios.chatsentinel.shared.utils.VersionUtil;
 
 public class ChatSentinelCommand implements CommandExecutor {
+	private ChatPlayerManager chatPlayerManager;
 	private BukkitModuleManager moduleManager;
 	private Server server;
 
-	public ChatSentinelCommand(BukkitModuleManager moduleManager, Server server) {
+	public ChatSentinelCommand(ChatPlayerManager chatPlayerManager, BukkitModuleManager moduleManager, Server server) {
+		this.chatPlayerManager = chatPlayerManager;
 		this.moduleManager = moduleManager;
 		this.server = server;
 	}
@@ -26,7 +28,7 @@ public class ChatSentinelCommand implements CommandExecutor {
 		String lang;
 
 		if (sender instanceof Player) {
-			lang = VersionUtil.getLocale((Player) sender);
+			lang = chatPlayerManager.getPlayerOrCreate(((Player) sender)).getLocale();
 		} else {
 			lang = "en";
 		}
