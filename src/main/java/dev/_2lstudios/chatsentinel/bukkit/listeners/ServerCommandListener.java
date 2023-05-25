@@ -124,6 +124,18 @@ public class ServerCommandListener implements Listener {
 			String originalMessage = event.getMessage();
 			boolean isNormalCommand = generalModule.isCommand(originalMessage);
 			String message = originalMessage;
+			MessagesModule messagesModule = moduleManager.getMessagesModule();
+			String playerName = player.getName();
+			String lang = chatPlayer.getLocale();
+
+			processModule(server, player, chatPlayer, messagesModule, moduleManager.getSyntaxModule(), event,
+					playerName, message, originalMessage, lang, isNormalCommand);
+			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCapsModule(), event, playerName,
+					message, originalMessage, lang, isNormalCommand);
+			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCooldownModule(), event,
+					playerName, message, originalMessage, lang, isNormalCommand);
+			processModule(server, player, chatPlayer, messagesModule, moduleManager.getFloodModule(), event, playerName,
+					message, originalMessage, lang, isNormalCommand);
 
 			if (isNormalCommand && originalMessage.contains(" ")) {
 				message = message.substring(message.indexOf(" "));
@@ -146,19 +158,7 @@ public class ServerCommandListener implements Listener {
 
 			message = message.trim();
 
-			MessagesModule messagesModule = moduleManager.getMessagesModule();
-			String playerName = player.getName();
-			String lang = chatPlayer.getLocale();
-
-			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCapsModule(), event, playerName,
-					message, originalMessage, lang, isNormalCommand);
-			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCooldownModule(), event,
-					playerName, message, originalMessage, lang, isNormalCommand);
-			processModule(server, player, chatPlayer, messagesModule, moduleManager.getFloodModule(), event, playerName,
-					message, originalMessage, lang, isNormalCommand);
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getBlacklistModule(), event,
-					playerName, message, originalMessage, lang, isNormalCommand);
-			processModule(server, player, chatPlayer, messagesModule, moduleManager.getSyntaxModule(), event,
 					playerName, message, originalMessage, lang, isNormalCommand);
 
 			if (!event.isCancelled()) {
