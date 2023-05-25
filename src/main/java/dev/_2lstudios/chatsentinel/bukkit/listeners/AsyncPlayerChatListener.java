@@ -128,8 +128,11 @@ public class AsyncPlayerChatListener implements Listener {
 			String message = originalMessage;
 
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCapsModule(), event, playerName, message, originalMessage, lang);
+			if (event.isCancelled()) return;
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCooldownModule(), event, playerName, message, originalMessage, lang);
+			if (event.isCancelled()) return;
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getFloodModule(), event, playerName, message, originalMessage, lang);
+			if (event.isCancelled()) return;
 
 			if (generalModule.isSanitizeEnabled()) {
 				message = generalModule.sanitize(message);

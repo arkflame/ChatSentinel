@@ -130,12 +130,16 @@ public class ServerCommandListener implements Listener {
 
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getSyntaxModule(), event,
 					playerName, message, originalMessage, lang, isNormalCommand);
+			if (event.isCancelled()) return;
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCapsModule(), event, playerName,
 					message, originalMessage, lang, isNormalCommand);
+			if (event.isCancelled()) return;
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getCooldownModule(), event,
 					playerName, message, originalMessage, lang, isNormalCommand);
+			if (event.isCancelled()) return;
 			processModule(server, player, chatPlayer, messagesModule, moduleManager.getFloodModule(), event, playerName,
 					message, originalMessage, lang, isNormalCommand);
+			if (event.isCancelled()) return;
 
 			if (isNormalCommand && originalMessage.contains(" ")) {
 				message = message.substring(message.indexOf(" "));
