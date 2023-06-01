@@ -20,7 +20,7 @@ expressions:
   - pelotudo
   - poronga
   - rat(a|ita)
-  - trol(o|a)
+  - ( |^)trol(o|a)( |&)
   # Spaglish
   - idiot(a)?
   # Swearing (English)
