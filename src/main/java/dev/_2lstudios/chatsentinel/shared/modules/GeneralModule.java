@@ -54,7 +54,15 @@ public class GeneralModule {
 		return nonAlphaNumericPattern.matcher(text).replaceAll("");
 	}
 
+	private boolean needsNicknameCompile = false;
+
+	public boolean needsNicknameCompile() {
+		return needsNicknameCompile;
+	}
+
 	public void compileNicknamesPattern() {
+		needsNicknameCompile = false;
+
 		StringBuilder stringBuilder = new StringBuilder();
 		boolean first = true;
 
@@ -80,7 +88,7 @@ public class GeneralModule {
 		nicknames.add(removeNonAlphanumeric(nickname));
 
 		// Compile the pattern with the nicknames
-		compileNicknamesPattern();
+		needsNicknameCompile = true;
 	}
 
 	public void removeNickname(String nickname) {
@@ -88,7 +96,7 @@ public class GeneralModule {
 		nicknames.remove(removeNonAlphanumeric(nickname));
 		
 		// Compile the pattern with the nicknames
-		compileNicknamesPattern();
+		needsNicknameCompile = true;
 	}
 
 	public String sanitizeNames(String message) {

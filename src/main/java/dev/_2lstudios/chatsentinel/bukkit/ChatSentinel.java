@@ -31,5 +31,11 @@ public class ChatSentinel extends JavaPlugin {
 		pluginManager.registerEvents(new ServerCommandListener(this, moduleManager, chatPlayerManager), this);
 
 		getCommand("chatsentinel").setExecutor(new ChatSentinelCommand(chatPlayerManager, moduleManager, server));
+
+		getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+			if (generalModule.needsNicknameCompile()) {
+				generalModule.compileNicknamesPattern();
+			}
+		}, 20L, 20L);
 	}
 }
