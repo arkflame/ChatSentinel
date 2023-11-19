@@ -2,6 +2,7 @@ package dev._2lstudios.chatsentinel.bukkit.listeners;
 
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -100,7 +101,7 @@ public class ServerCommandListener implements Listener {
 				}
 
 				if (warns >= maxWarns && maxWarns > 0) {
-					server.getScheduler().runTask(plugin, () -> {
+					Bukkit.getGlobalRegionScheduler().run(plugin, task -> {
 						for (String command : module.getCommands(placeholders)) {
 							server.dispatchCommand(server.getConsoleSender(), command);
 						}

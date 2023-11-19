@@ -13,6 +13,7 @@ import dev._2lstudios.chatsentinel.shared.modules.GeneralModule;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
+import org.bukkit.Bukkit;
 
 public class ChatSentinel extends Plugin {
 	@Override
@@ -36,7 +37,7 @@ public class ChatSentinel extends Plugin {
 
 		pluginManager.registerCommand(this, new ChatSentinelCommand(chatPlayerManager, moduleManager, server));
 
-		getProxy().getScheduler().schedule(this, () -> {
+		Bukkit.getAsyncScheduler().runAtFixedRate((org.bukkit.plugin.Plugin) this, task -> {
 			if (generalModule.needsNicknameCompile()) {
 				generalModule.compileNicknamesPattern();
 			}

@@ -1,5 +1,6 @@
 package dev._2lstudios.chatsentinel.bukkit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,7 +33,7 @@ public class ChatSentinel extends JavaPlugin {
 
 		getCommand("chatsentinel").setExecutor(new ChatSentinelCommand(chatPlayerManager, moduleManager, server));
 
-		getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+		Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, task -> {
 			if (generalModule.needsNicknameCompile()) {
 				generalModule.compileNicknamesPattern();
 			}

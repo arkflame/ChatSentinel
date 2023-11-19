@@ -3,6 +3,7 @@ package dev._2lstudios.chatsentinel.bukkit.listeners;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -101,12 +102,11 @@ public class AsyncPlayerChatListener implements Listener {
 			}
 
 			if (warns >= maxWarns && maxWarns > 0) {
-				server.getScheduler().runTask(chatSentinel, () -> {
+				Bukkit.getGlobalRegionScheduler().run(chatSentinel, task -> {
 					for (String command : module.getCommands(placeholders)) {
 						server.dispatchCommand(server.getConsoleSender(), command);
 					}
 				});
-
 				chatPlayer.clearWarns();
 			}
 		}
