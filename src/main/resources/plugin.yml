@@ -4,6 +4,7 @@ author: ${author}
 version: ${version}
 url: ${url}
 main: dev._2lstudios.chatsentinel.bukkit.ChatSentinel
+folia-supported: true
 api: "1.13"
 api-version: "1.13"
 commands:
