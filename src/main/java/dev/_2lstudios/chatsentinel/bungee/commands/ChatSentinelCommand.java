@@ -1,6 +1,7 @@
 package dev._2lstudios.chatsentinel.bungee.commands;
 
 import dev._2lstudios.chatsentinel.bungee.modules.BungeeModuleManager;
+import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 import net.md_5.bungee.api.CommandSender;
@@ -29,9 +30,11 @@ public class ChatSentinelCommand extends Command {
 	public void execute(CommandSender sender, String[] args) {
 		MessagesModule messagesModule = moduleManager.getMessagesModule();
 		String lang;
+		ChatPlayer chatPlayer = null;
 
 		if (sender instanceof ProxiedPlayer) {
-			lang = chatPlayerManager.getPlayerOrCreate(((ProxiedPlayer) sender)).getLocale();
+			chatPlayer = chatPlayerManager.getPlayerOrCreate(((ProxiedPlayer) sender));
+			lang = chatPlayer.getLocale();
 		} else {
 			lang = "en";
 		}
@@ -56,6 +59,16 @@ public class ChatSentinelCommand extends Command {
 
 				for (ProxiedPlayer player : server.getPlayers()) {
 					sendMessage(player, emptyLines.toString());
+				}
+			} else if (args[0].equalsIgnoreCase("notify")) {
+				boolean notify = !chatPlayer.isNotify();
+				
+				chatPlayer.setNotify(notify);
+
+				if (notify) {
+					sendMessage(sender, messagesModule.getNotifyEnabled(lang));
+				} else {
+					sendMessage(sender, messagesModule.getNotifyDisabled(lang));
 				}
 			} else {
 				sendMessage(sender, messagesModule.getUnknownCommand(lang));

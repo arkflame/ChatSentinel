@@ -49,4 +49,12 @@ public class MessagesModule {
 	public String getFiltered(String lang) {
 		return PlaceholderUtil.replacePlaceholders(getString(lang, "filtered"));
 	}
+
+    public String getNotifyEnabled(String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "notify-enabled"));
+    }
+
+    public String getNotifyDisabled(String lang) {
+		return PlaceholderUtil.replacePlaceholders(getString(lang, "notify-disabled"));
+    }
 }

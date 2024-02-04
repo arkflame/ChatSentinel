@@ -93,8 +93,9 @@ public class AsyncPlayerChatListener implements Listener {
 
 			if (notificationMessage != null && !notificationMessage.isEmpty()) {
 				for (Player player1 : server.getOnlinePlayers()) {
-					if (player1.hasPermission("chatsentinel.notify"))
+					if (chatPlayerManager.getPlayerOrCreate(player1).isNotify()) {
 						player1.sendMessage(notificationMessage);
+					}
 				}
 
 				server.getConsoleSender().sendMessage(notificationMessage);

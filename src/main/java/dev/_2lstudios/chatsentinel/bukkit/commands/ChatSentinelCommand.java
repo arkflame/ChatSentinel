@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import dev._2lstudios.chatsentinel.bukkit.modules.BukkitModuleManager;
+import dev._2lstudios.chatsentinel.shared.chat.ChatPlayer;
 import dev._2lstudios.chatsentinel.shared.chat.ChatPlayerManager;
 import dev._2lstudios.chatsentinel.shared.modules.MessagesModule;
 
@@ -26,9 +27,11 @@ public class ChatSentinelCommand implements CommandExecutor {
 			String[] args) {
 		MessagesModule messagesModule = moduleManager.getMessagesModule();
 		String lang;
+		ChatPlayer chatPlayer = null;
 
 		if (sender instanceof Player) {
-			lang = chatPlayerManager.getPlayerOrCreate(((Player) sender)).getLocale();
+			chatPlayer = chatPlayerManager.getPlayerOrCreate(((Player) sender));
+			lang = chatPlayer.getLocale();
 		} else {
 			lang = "en";
 		}
@@ -40,6 +43,16 @@ public class ChatSentinelCommand implements CommandExecutor {
 				moduleManager.reloadData();
 
 				sender.sendMessage(messagesModule.getReload(lang));
+			} else if (args[0].equalsIgnoreCase("notify")) {
+				boolean notify = !chatPlayer.isNotify();
+				
+				chatPlayer.setNotify(notify);
+
+				if (notify) {
+					sender.sendMessage(messagesModule.getNotifyEnabled(lang));
+				} else {
+					sender.sendMessage(messagesModule.getNotifyDisabled(lang));
+				}
 			} else if (args[0].equalsIgnoreCase("clear")) {
 				StringBuilder emptyLines = new StringBuilder();
 				String newLine = "\n ";

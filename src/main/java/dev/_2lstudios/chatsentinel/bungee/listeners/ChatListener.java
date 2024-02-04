@@ -104,7 +104,7 @@ public class ChatListener implements Listener {
 
 			if (notificationMessage != null && !notificationMessage.isEmpty()) {
 				for (ProxiedPlayer player1 : server.getPlayers()) {
-					if (player1.hasPermission("chatsentinel.notify")) {
+					if (chatPlayerManager.getPlayerOrCreate(player1).isNotify()) {
 						player1.sendMessage(TextComponent.fromLegacyText(notificationMessage));
 					}
 				}

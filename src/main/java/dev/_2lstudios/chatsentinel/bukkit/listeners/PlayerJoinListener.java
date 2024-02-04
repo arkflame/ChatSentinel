@@ -1,5 +1,6 @@
 package dev._2lstudios.chatsentinel.bukkit.listeners;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -19,14 +20,18 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        ChatPlayer chatPlayer = chatPlayerManager.getPlayerOrCreate(event.getPlayer());
+        Player player = event.getPlayer();
+        ChatPlayer chatPlayer = chatPlayerManager.getPlayerOrCreate(player);
 
         if (chatPlayer != null) {
             // Reset the locale of the player if already exists
             chatPlayer.setLocale(null);
 
+            // Set notifications
+            chatPlayer.setNotify(player.hasPermission("chatsentinel.notify"));
+
             // Add the nickname
-            generalModule.addNickname(event.getPlayer().getName());
+            generalModule.addNickname(player.getName());
         }
     }
 }

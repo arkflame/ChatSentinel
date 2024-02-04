@@ -15,6 +15,7 @@ public class ChatPlayer {
     private Deque<String> lastMessages;
     private String locale = null;
     private long lastMessageTime;
+    private boolean notify = false;
 
     public ChatPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -108,5 +109,13 @@ public class ChatPlayer {
 
     public boolean hasLocale() {
         return this.locale != null;
+    }
+
+    public void setNotify(boolean notify) {
+        this.notify = notify;
+    }
+
+    public boolean isNotify() {
+        return notify;
     }
 }
