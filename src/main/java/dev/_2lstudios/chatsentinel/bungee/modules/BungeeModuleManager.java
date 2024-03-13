@@ -63,7 +63,8 @@ public class BungeeModuleManager extends ModuleManager {
 				configYml.getBoolean("blacklist.fake_message"), configYml.getBoolean("blacklist.hide_words"),
 				configYml.getInt("blacklist.warn.max"), configYml.getString("blacklist.warn.notification"),
 				configYml.getStringList("blacklist.punishments").toArray(new String[0]),
-				blacklistYml.getStringList("expressions").toArray(new String[0]));
+				blacklistYml.getStringList("expressions").toArray(new String[0]),
+				configYml.getBoolean("blacklist.block_raw_message"));
 		getSyntaxModule().loadData(configYml.getBoolean("syntax.enabled"), configYml.getInt("syntax.warn.max"),
 				configYml.getString("syntax.warn.notification"),
 				configYml.getStringList("syntax.whitelist").toArray(new String[0]),

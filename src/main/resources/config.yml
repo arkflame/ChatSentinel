@@ -55,6 +55,11 @@ blacklist:
   # Set to [] to disable this feature completely.
   punishments:
     - "mute -s %player% Offensive Language (%message%) 1d"
+  
+  #     if fake_message is false
+  # and if hide_words is false
+  # then shall raw message be sent to everyone? Without censoring curse words
+  block_raw_message: false
 
 # Checks if messages have too many caps.
 caps:
